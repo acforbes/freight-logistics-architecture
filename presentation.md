@@ -22,8 +22,8 @@ style: |
 
 # Freight Logistics Architecture
 ### Integrated Cloud Infrastructure & Secure Microservice Gateways
-**Candidate Technical Presentation**
-Academic Research Group Systems Defense
+**Technical Presentation**
+DevOps Group Systems Defense
 
 ---
 

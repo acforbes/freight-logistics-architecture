@@ -41,24 +41,25 @@ graph TD
         SWA_Prod[Angular Prod SWA]
     end
 
-    subgraph Backend App Service Plan [The Slot Swap Lifecycle]
-        SWA_Test -->|Direct HTTPS / CORS Bound| API_Test[Test App Service]
+    subgraph Backend App Service Plan [Sequential Swap Chain]
+        SWA_Test -->|Direct HTTPS / CORS Bound| Slot_Test[[Test Slot]]
         SWA_Stag -->|Direct HTTPS / CORS Bound| Slot_Stag[[Staging Slot]]
         SWA_Prod -->|Direct HTTPS / CORS Bound| Slot_Prod[[Production Slot]]
         
-        Slot_Stag -.->|SWAP OPERATION| Slot_Prod
+        Slot_Test <-->|1. Test to Staging Swap| Slot_Stag
+        Slot_Stag <-->|2. Staging to Prod Swap| Slot_Prod
     end
 
     subgraph Data & Storage Layer
-        API_Test --> DB_Test[(Azure SQL: Test)]
+        Slot_Test --> DB_Test[(Azure SQL: Test)]
         Slot_Stag -->|Sticky Setting| DB_Prod[(Azure SQL: Production)]
         Slot_Prod -->|Sticky Setting| DB_Prod
-        AppService -->|Cache Aside| Redis[(Azure Cache for Redis)]
-        AppService -->|Docs & GPS Blobs| Blob[(Azure Blob Storage)]
+        Slot_Prod -->|Cache Aside| Redis[(Azure Cache for Redis)]
+        Slot_Prod -->|Docs & GPS Blobs| Blob[(Azure Blob Storage)]
     end
 
     subgraph Secure Microservice Facade
-        AppService[Web API] -->|Internal Routing / MTLS| APIM[Azure API Management]
+        Slot_Prod[Web API: Prod Slot] -->|Internal Routing / MTLS| APIM[Azure API Management]
         PM[Postman Client / Integration Tests] -->|Direct Route Verification| APIM
         APIM <-->|OAuth2 / Claims Validation| Entra[Azure Entra ID]
         APIM -->|Serverless Translation| AzFunc[Azure Functions]

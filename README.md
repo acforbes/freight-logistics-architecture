@@ -1,13 +1,15 @@
 # Freight Logistics System Architecture
 
-An enterprise cloud-native architecture for a mission-critical freight logistics web platform. This system decouples static client delivery from stateful compute layers, utilizes a strict 4-tier caching model to minimize database load, and secures external serverless microservices behind an internal API Management facade.
+An enterprise cloud-native architecture for a mission-critical freight logistics web platform. This system decouples static client delivery from stateful compute layers, utilizes a strict 4-tier caching model to minimize database load, secures its application boundaries using MSAL with Microsoft login, and encapsulates external serverless microservices behind an internal API Management facade.
 
 ## 🚀 Architectural Pillars
 
 * **Zero-Downtime Infrastructure:** Blue/Green style code promotions via Azure App Service Deployment Slots.
+* **Enterprise Identity Federation:** Front-end access secured via MSAL (Microsoft Authentication Library) bound to Azure Entra ID RBAC profiles.
 * **Strict State Isolation:** Unified physical environment boundaries for Test/Dev, with logical key-space isolation for shared caching tiers.
 * **Cost-Controlled Compute:** A 3-tier hybrid route resolution pipeline designed to shield external computing budgets (Azure Maps API).
 * **Decoupled Delivery Lifecycles:** Direct CDN asset publishing for front-end layers, fully isolated from backend binary modifications.
+* **Optimized Data Lifecycles:** Horizontal date-range partitioning and rolling data retention to enforce strict budget caps on Azure SQL.
 
 ---
 
@@ -22,9 +24,9 @@ graph TD
     end
 
     subgraph Backend App Service Plan [The Slot Swap Lifecycle]
-        SWA_Test -->|Direct HTTPS| API_Test[Test App Service]
-        SWA_Stag -->|Direct HTTPS| Slot_Stag[[Staging Slot]]
-        SWA_Prod -->|Direct HTTPS| Slot_Prod[[Production Slot]]
+        SWA_Test -->|Direct HTTPS API Calls| API_Test[Test App Service]
+        SWA_Stag -->|Direct HTTPS API Calls| Slot_Stag[[Staging Slot]]
+        SWA_Prod -->|Direct HTTPS API Calls| Slot_Prod[[Production Slot]]
         
         Slot_Stag -.->|SWAP OPERATION| Slot_Prod
     end
@@ -38,13 +40,34 @@ graph TD
     end
 
     subgraph Secure Microservice Facade
-        AppService[Web API] -->|Internal Routing| APIM[Azure API Management]
+        AppService[Web API] -->|Internal Routing / MTLS| APIM[Azure API Management]
         PM[Postman Client / Integration Tests] -->|Direct Route Verification| APIM
-        APIM <-->|OAuth2 / Claims| Entra[Azure Entra ID]
+        APIM <-->|OAuth2 / Claims Validation| Entra[Azure Entra ID]
         APIM -->|Serverless Translation| AzFunc[Azure Functions]
         AzFunc -->|Webhooks / Polling| External[3rd Party Carrier APIs]
     end
 ```
+
+---
+
+## 🔒 Enterprise Identity & Secure Token Flow (MSAL + Entra ID)
+
+The application implements a zero-trust identity architecture mapping frontend presentation directly to backend compute capabilities:
+
+```mermaid
+graph TD
+    User[User / Dispatcher] -->|1. Interactive Login| MSAL[Angular SWA: MSAL Layer]
+    MSAL -->|2. Redirect Auth| Microsoft[Microsoft Identity Platform]
+    Microsoft -->|3. Issue JWT Access Token| MSAL
+    
+    MSAL -->|4. Bearer Token in Request Header| WebAPI[Web API: Azure App Service]
+    WebAPI <-->|5. Cryptographic Claim Verification| Entra[Azure Entra ID]
+```
+
+### Authentication & Authorization Details
+1. **Client-Side Guarding (Angular):** Routes within the Angular app are protected using native MSAL Guards. Unauthenticated users are automatically redirected to the organizational Microsoft sign-in page.
+2. **The Interceptor Pattern:** An MSAL Interceptor maps your target backend API endpoints. It handles silent token acquisition and background token renewal, ensuring users are never interrupted during prolonged logistics dispatch sessions.
+3. **API Perimeter Validation:** The .NET Web API extracts the claims array from the decrypted token payload to verify organizational tenant parameters and user-specific roles before allowing operations on core database or storage entities.
 
 ---
 
@@ -66,17 +89,6 @@ To prevent runtime exceptions during slot swaps, this repository mandates the **
 
 ---
 
-## ⚡ Data Volatility & Caching Lifecycle
-
-The system enforces a **4-tier caching strategy** optimized around data longevity:
-
-| Tier | Engine | Target Data Payload | Invalidation / Structural Strategy |
-| :--- | :--- | :--- | :--- |
-| **Tier 1** | `.NET ResponseCache` | Static System Lookups | Hard-capped local memory allocation; zero network I/O overhead. |
-| **Tier 2** | `Azure Cache for Redis` | Dropdown Typeaheads | Shared instance isolated logically via key prefixing (`prod:typeahead:*` vs. `test:typeahead:*`). |
-| **Tier 3** | Hybrid Cache-Aside / Blob | Multi-City Route GPS Coordinates | 24-hour `.NET ResponseCache` expiration backed by persistent JSON file writes on Azure Blob Storage. |
-| **Tier 4** | `Azure Blob Storage` | Invoices / Bills of Lading | Cold, append-only document container storage. |
-
 ## 💾 Database Optimization & Lifecycle Management (Azure SQL)
 
 To prevent unbounded database size growth and maintain rapid query performance as historical freight data accumulates, Azure SQL employs two lifecycle management strategies:
@@ -90,6 +102,19 @@ To prevent unbounded database size growth and maintain rapid query performance a
 * **The Problem:** System telemetry, application errors, and third-party API usage logs (`ApplicationLogs`) grow aggressively but lose their clinical value after a few months.
 * **The Solution:** A **date-range retention period** (e.g., a rolling 90-day window) is strictly enforced. 
 * **The Benefit:** An automated, low-priority cleanup process continuously purges records older than the retention boundary. This hard-caps the database file footprint, prevents data storage costs from spiraling, and ensures database backups and restoration times remain lean.
+
+---
+
+## ⚡ Data Volatility & Caching Lifecycle
+
+The system enforces a **4-tier caching strategy** optimized around data longevity:
+
+| Tier | Engine | Target Data Payload | Invalidation / Structural Strategy |
+| :--- | :--- | :--- | :--- |
+| **Tier 1** | `.NET ResponseCache` | Static System Lookups | Hard-capped local memory allocation; zero network I/O overhead. |
+| **Tier 2** | `Azure Cache for Redis` | Dropdown Typeaheads | Shared instance isolated logically via key prefixing (`prod:typeahead:*` vs. `test:typeahead:*`). |
+| **Tier 3** | Hybrid Cache-Aside / Blob | Multi-City Route GPS Coordinates | 24-hour `.NET ResponseCache` expiration backed by persistent JSON file writes on Azure Blob Storage. |
+| **Tier 4** | `Azure Blob Storage` | Invoices / Bills of Lading | Cold, append-only document container storage. |
 
 ### Multi-City Route Resolution Fallback Flow
 1. **Read Tier 1:** Check local `.NET ResponseCache` (Valid for 24 hours).

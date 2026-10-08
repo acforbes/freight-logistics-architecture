@@ -65,11 +65,21 @@ graph TD
 
 ---
 
-## 3. Component Communication & Integration Architecture
+## 3. End-to-End Enterprise Identity & Security
+
+* **Frontend Authentication:** The Angular UI integrates **MSAL (Microsoft Authentication Library)** to handle secure user authentication directly via Microsoft login.
+* **The Token Lifecycle:**
+    * MSAL acquires and automatically caches cryptographic JWT Access Tokens in the browser.
+    * An internal HTTP interceptor attaches the token to all direct backend API requests.
+* **Backend Authorization:** The `.NET Web API` validates the incoming Bearer token claims against **Azure Entra ID** to enforce granular Role-Based Access Control (RBAC).
+
+---
+
+## 4. Component Communication & Integration Architecture
 
 ```mermaid
 graph TD
-    Client[Angular Frontend / Azure SWA] -->|Direct HTTPS API Calls| AppService[Web API: Azure App Services / Slots]
+    Client[Angular Frontend / Azure SWA] -->|Direct HTTPS API Calls with MSAL Token| AppService[Web API: Azure App Services / Slots]
     
     subgraph Integrated Storage & Caching
         AppService -->|Cache Aside| Redis[(Azure Cache for Redis)]
@@ -89,7 +99,7 @@ graph TD
 
 ---
 
-## 4. Compute State & Schema Continuity
+## 5. Compute State & Schema Continuity
 
 * **Frontend Delivery:** Angular static web assets are directly published to their respective Azure SWA instances. No slot switches are performed on the CDN edge.
 * **Backend Zero-Downtime Swaps:** API code is published to the **Staging Slot** and fully warmed up by hitting the root runtime path prior to traffic routing redirection.
@@ -97,7 +107,7 @@ graph TD
 
 ---
 
-## 4b. Database Tuning & Cloud Cost Controls
+## 6. Database Tuning & Cloud Cost Controls
 
 To prevent unbounded data growth and optimize compute costs within Azure SQL, the relational layer implements two lifecycle architectures:
 
@@ -112,7 +122,7 @@ To prevent unbounded data growth and optimize compute costs within Azure SQL, th
 
 ---
 
-## 5. Comprehensive 4-Tier Caching Topology
+## 7. Comprehensive 4-Tier Caching Topology
 
 To aggressively maximize performance, caching layers are partitioned by data change frequency:
 
@@ -125,7 +135,7 @@ To aggressively maximize performance, caching layers are partitioned by data cha
 
 ---
 
-## 6. Tiered Route Resolution Pipeline
+## 8. Tiered Route Resolution Pipeline
 
 When a user requests multi-city route GPS coordinates, the Web API processes the request through a strict **3-tier failover lifecycle**:
 
@@ -144,7 +154,7 @@ graph TD
 
 ---
 
-## 7. Q&A and Engineering Appendix
+## 9. Q&A and Engineering Appendix
 
 * Open for peer review regarding schema management, token validation lifetimes, and caching boundaries.
 * **Deep dives available in repository:**

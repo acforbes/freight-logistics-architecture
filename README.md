@@ -13,6 +13,24 @@ An enterprise cloud-native architecture for a mission-critical freight logistics
 
 ---
 
+## 🔄 Architectural Evolution: System Modernization Blueprint
+
+To fully understand the current architecture, this section outlines the technical transformations implemented to resolve critical architectural debt from the legacy deployment.
+
+### System Comparison Profile
+
+| Architectural Vector | Legacy Topology ("Before") | Modernized Architecture ("After") | Engineering & Financial Impact |
+| :--- | :--- | :--- | :--- |
+| **Release Confidence** | Direct Slot Swap from Test ➔ Prod. Zero safety staging buffer. | **Isolated Test bed** + **Staging-to-Prod Slot Swap** lifecycle. | Code is smoke-tested against live environment strings prior to routing production traffic. |
+| **UI/API Lifecycle** | Monolithic combined UI/API container deployment package. | **Decoupled:** Direct CDN SWA publishing + isolated API App Service. | UI design polishes bypass backend restarts; assets scale globally on the CDN edge instantly. |
+| **Perimeter Traffic** | Shared domain space (Zero CORS overhead required). | Cross-Origin boundaries isolated via target App Service policies. | Employs explicit browser-level preflight headers and origin restrictions (`Allow-Credentials`). |
+| **Integration Boundary** | 3rd-party APIs invoked straight from Web API threads, causing UI thread stalls. | **Internal APIM Facade** + Serverless **Azure Functions** proxy layer. | Fragile external dependencies are sandboxed; failures or API lag never impact core thread loops. |
+| **Search Performance** | Massive, resource-heavy city list array preloaded in server API RAM memory. | Dedicated distributed **Azure Cache for Redis** index using `prod:typeahead:*` tokens. | Drastically reduces Web API RAM footprints while providing sub-10ms autocompletion. |
+| **Route Performance** | Unbounded, heavy relational SQL tables tracking multi-city GPS paths. | **3-Tier Fallback Loop:** `.NET ResponseCache` ➔ **Azure Blob Storage JSON** ➔ Azure Maps. | Shrinks database engine size; reduces Azure Maps compute expenses by caching static assets as immutable objects. |
+| **Database Resiliency** | No data partitioning or archival rules; query lookups on `AuditLogs` timed out. | Horizontal **Date-Range Partitioning** (monthly) + rolling 90-day diagnostic retention. | Query engines use **partition pruning** for sub-second audit returns; hard-caps database file size growth. |
+
+---
+
 ## 🗺️ System Topology
 
 ```mermaid
@@ -24,9 +42,9 @@ graph TD
     end
 
     subgraph Backend App Service Plan [The Slot Swap Lifecycle]
-        SWA_Test -->|Direct HTTPS API Calls| API_Test[Test App Service]
-        SWA_Stag -->|Direct HTTPS API Calls| Slot_Stag[[Staging Slot]]
-        SWA_Prod -->|Direct HTTPS API Calls| Slot_Prod[[Production Slot]]
+        SWA_Test -->|Direct HTTPS / CORS Bound| API_Test[Test App Service]
+        SWA_Stag -->|Direct HTTPS / CORS Bound| Slot_Stag[[Staging Slot]]
+        SWA_Prod -->|Direct HTTPS / CORS Bound| Slot_Prod[[Production Slot]]
         
         Slot_Stag -.->|SWAP OPERATION| Slot_Prod
     end
@@ -76,6 +94,12 @@ graph TD
 ### 1. Frontend Promotion (Azure Static Web Apps)
 The Angular application compiles against environment-specific profile variables (`environment.prod.ts`). Compiled assets are published **directly** to their respective environment containers. Front-end visual deployments are fully insulated from backend container recycling.
 
+### ### 🌐 Cross-Origin Resource Sharing (CORS) Enforcement
+Because the UI assets and API binaries exist on fundamentally decoupled domain endpoints, a strict CORS matrix is enforced at the App Service tier:
+* **Preflight (OPTIONS) Resolution:** The App Service is configured to intercept and validate cross-origin preflight requests before execution.
+* **Domain Restrictions:** Whitelists are configured natively in Azure on a per-slot basis, mapping the Test, Staging, and Production SWA domain locations respectively. Wildcards (`*`) are strictly prohibited.
+* **Credentials Support:** `Access-Control-Allow-Credentials` is toggled on to allow safe cryptographic transmissions of bearer tokens derived from the MSAL pipeline.
+
 ### 2. Backend Promotion (Azure App Service Slots)
 The .NET Web API utilizes **Staging** and **Production** slots inside a unified App Service Plan.
 * **The Warmup Pattern:** Code is published to the `Staging Slot`. Azure initiates local warm-up pings to spin up runtime worker threads before routing any live traffic.
@@ -83,7 +107,7 @@ The .NET Web API utilizes **Staging** and **Production** slots inside a unified 
 
 ### 3. Database Schema Continuity (Azure SQL)
 To prevent runtime exceptions during slot swaps, this repository mandates the **Expand and Contract (Parallel Change) Pattern**:
-1. **Expand:** Schema migrations (adding nullable fields or new lookup tables) are executed manually on the Production Database *prior* to a swap.
+1. **Expand:** Schema migrations (adding nullable fields or new lookup tables) are executed manually on the Production Database *prior to a swap*.
 2. **Swap:** The slot swap is executed. Both old and new API binaries simultaneously interact with the database safely.
 3. **Contract:** Legacy fields/columns are removed after the environment completely stabilizes.
 

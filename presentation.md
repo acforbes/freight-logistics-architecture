@@ -38,6 +38,17 @@ DevOps Group Systems Defense
 
 ---
 
+## 1b. Legacy Topology & Production Pain Points
+
+* **High-Risk Promotions:** Had only a Test and Prod environment. Slot swaps were executed *between* Test and Prod directly, with no Staging layer for validation.
+* **Monolithic Complications:** Combined UI and API deployment package. 3rd-party API calls were fired straight from the application runtime, stalling user interfaces when external systems lagged.
+* **Severe Memory & Database Pressure:**
+    * **No Caching Layer:** Typeaheads relied on a massive, preloaded city-list object held entirely in API server memory.
+    * **Storage Exhaustion:** Multi-city GPS coordinate paths sat inside a bloated database table. No partitioning on `AuditLogs` resulted in query timeouts.
+    * **No Storage Offloading:** No document management engine or file storage was utilized.
+
+---
+
 ## 2. Decoupled Multi-Environment Topology
 
 ```mermaid

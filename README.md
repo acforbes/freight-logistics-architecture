@@ -77,6 +77,20 @@ The system enforces a **4-tier caching strategy** optimized around data longevit
 | **Tier 3** | Hybrid Cache-Aside / Blob | Multi-City Route GPS Coordinates | 24-hour `.NET ResponseCache` expiration backed by persistent JSON file writes on Azure Blob Storage. |
 | **Tier 4** | `Azure Blob Storage` | Invoices / Bills of Lading | Cold, append-only document container storage. |
 
+## 💾 Database Optimization & Lifecycle Management (Azure SQL)
+
+To prevent unbounded database size growth and maintain rapid query performance as historical freight data accumulates, Azure SQL employs two lifecycle management strategies:
+
+### 1. Horizontal Partitioning for Audit Trails
+* **The Problem:** The `AuditLogs` table logs every structural change (e.g., dispatch modifications, user overrides, financial updates), causing it to grow by millions of rows rapidly.
+* **The Solution:** The table is **partitioned by date ranges** (e.g., monthly chunks) utilizing Azure SQL Partition Functions and Schemes. 
+* **The Benefit:** When a dispatcher requests an audit trail for a specific date range, the SQL engine executes **partition pruning**—completely ignoring irrelevant months. This keeps index sizes small, optimizes RAM usage, and maintains sub-second query execution times.
+
+### 2. Time-Bounded Log Retention
+* **The Problem:** System telemetry, application errors, and third-party API usage logs (`ApplicationLogs`) grow aggressively but lose their clinical value after a few months.
+* **The Solution:** A **date-range retention period** (e.g., a rolling 90-day window) is strictly enforced. 
+* **The Benefit:** An automated, low-priority cleanup process continuously purges records older than the retention boundary. This hard-caps the database file footprint, prevents data storage costs from spiraling, and ensures database backups and restoration times remain lean.
+
 ### Multi-City Route Resolution Fallback Flow
 1. **Read Tier 1:** Check local `.NET ResponseCache` (Valid for 24 hours).
 2. **Read Tier 2:** If missed, fetch the standardized object string from **Azure Blob Storage** based on a deterministic route waypoint hash naming convention (`route_[hash].json`). Re-populate Tier 1.

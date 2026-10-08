@@ -97,6 +97,21 @@ graph TD
 
 ---
 
+## 4b. Database Tuning & Cloud Cost Controls
+
+To prevent unbounded data growth and optimize compute costs within Azure SQL, the relational layer implements two lifecycle architectures:
+
+* **Horizontal Table Partitioning:**
+    * High-volume `AuditLogs` are partitioned by **date ranges**.
+    * Query engines leverage **partition pruning** to completely bypass irrelevant data blocks.
+    * Result: Sub-second user access to historic compliance trails.
+* **Time-Bounded Log Retention:**
+    * System telemetry and API `UsageLogs` are capped on a rolling retention window.
+    * An automated background process continuously purges aged records.
+    * Result: Hard-caps database file size growth and flattens Azure storage expenses.
+
+---
+
 ## 5. Comprehensive 4-Tier Caching Topology
 
 To aggressively maximize performance, caching layers are partitioned by data change frequency:

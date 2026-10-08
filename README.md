@@ -100,10 +100,12 @@ Because the UI assets and API binaries exist on fundamentally decoupled domain e
 * **Domain Restrictions:** Whitelists are configured natively in Azure on a per-slot basis, mapping the Test, Staging, and Production SWA domain locations respectively. Wildcards (`*`) are strictly prohibited.
 * **Credentials Support:** `Access-Control-Allow-Credentials` is toggled on to allow safe cryptographic transmissions of bearer tokens derived from the MSAL pipeline.
 
-### 2. Backend Promotion (Azure App Service Slots)
-The .NET Web API utilizes **Staging** and **Production** slots inside a unified App Service Plan.
-* **The Warmup Pattern:** Code is published to the `Staging Slot`. Azure initiates local warm-up pings to spin up runtime worker threads before routing any live traffic.
-* **The Swap:** A manual swap shifts traffic pointers instantly. If any edge failures are detected post-swap, an instant rollback is executed with zero downtime.
+### 2. Backend Promotion (Sequential App Service Slot Chain)
+The .NET Web API utilizes a multi-step execution swap strategy across the **Test**, **Staging**, and **Production** slots inside a unified App Service Plan to enforce an immutable chain of custody:
+
+* **Step 1: The Staging Promotion:** The latest code is manually published and validated in the `Test Slot`. To promote it, a swap is executed between `Test` and `Staging`. The binaries shift, and the code is smoke-tested against live production infrastructure dependencies in the isolated `Staging Slot`.
+* **Step 2: The Production Deployment:** A second swap is executed between `Staging` and `Production`. This brings the newly verified code live to users instantly with zero downtime.
+* **The Instant Rollback Safety Net:** Following the final swap, the `Staging Slot` dynamically retains the *previous* live production binary. If an anomaly surfaces in production, a simple reverse swap instantly restores the stable environment state, guaranteeing a near-zero Recovery Time Objective (RTO).
 
 ### 3. Database Schema Continuity (Azure SQL)
 To prevent runtime exceptions during slot swaps, this repository mandates the **Expand and Contract (Parallel Change) Pattern**:

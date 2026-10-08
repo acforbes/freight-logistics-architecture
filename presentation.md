@@ -59,12 +59,13 @@ graph TD
         SWA_Prod[Angular Prod SWA]
     end
 
-    subgraph Backend App Service Plan [The Slot Swap Lifecycle]
-        SWA_Test -->|Direct UI-to-API| API_Test[Test App Service]
+    subgraph Backend App Service Plan [Sequential Swap Chain]
+        SWA_Test -->|Direct UI-to-API| API_Test[[Test Slot]]
         SWA_Stag -->|Direct UI-to-API| Slot_Stag[[Staging Slot]]
         SWA_Prod -->|Direct UI-to-API| Slot_Prod[[Production Slot]]
         
-        Slot_Stag -.->|SWAP OPERATION| Slot_Prod
+        API_Test <-->|1. PROMOTION SWAP| Slot_Stag
+        Slot_Stag <-->|2. DEPLOYMENT SWAP| Slot_Prod
     end
 
     subgraph Relational Data Layer

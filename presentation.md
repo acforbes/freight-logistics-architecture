@@ -51,7 +51,6 @@ DevOps Group Systems Defense
 
 ## 2. Decoupled Multi-Environment Topology
 
-
  ```mermaid
 graph TD
     subgraph Frontend Layer [Direct CDN Publishing]
@@ -75,8 +74,6 @@ graph TD
         Slot_Prod -->|Slot-Sticky Setting| DB_Prod_Main
     end
 ```
-
-<!-- ![w:850 h:400](https://github.com/acforbes/decoupled-multi-environment-topology.png) -->
 
 ---
 

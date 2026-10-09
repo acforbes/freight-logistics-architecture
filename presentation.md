@@ -30,7 +30,6 @@ DevOps Group Systems Defense
 ## 1. System Overview & Core Requirements
 
 * **Domain:** Mission-critical freight logistics web application.
-* **Core Technical Priorities:**
     * Decoupled frontend static asset delivery from stateful compute layers.
     * Zero-downtime backend execution via warm App Service deployment slots.
     * Isolated microservice gateway via APIM for third-party integrations and testing.

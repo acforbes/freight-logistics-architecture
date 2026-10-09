@@ -95,7 +95,7 @@ graph TD
 
 ### Authentication & Authorization Details
 1. **Client-Side Guarding (Angular):** Routes within the Angular app are protected using native MSAL Guards. Unauthenticated users are automatically redirected to the organizational Microsoft sign-in page.
-2. **The Interceptor Pattern:** An MSAL Interceptor maps your target backend API endpoints. It handles silent token acquisition and background token renewal, ensuring users are never interrupted during prolonged logistics dispatch sessions.
+2. **The Interceptor Pattern:** An MSAL Interceptor maps the target backend API endpoints. It handles silent token acquisition and background token renewal, ensuring users are never interrupted during prolonged logistics dispatch sessions.
 3. **API Perimeter Validation:** The .NET Web API extracts the claims array from the decrypted token payload to verify organizational tenant parameters and user-specific roles before allowing operations on core database or storage entities.
 
 ---

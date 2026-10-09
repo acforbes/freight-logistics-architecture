@@ -1,6 +1,6 @@
 # Appendix A: Architectural Trade-off Matrix
 
-This reference guide defends our technical selection for the Freight Logistics System against common alternatives explored in industrial and academic systems engineering.
+This reference guide justifies the technical architecture selected for the Freight Logistics System against common alternatives explored in industrial and academic systems engineering.
 
 | Architectural Decision | Chosen Approach | Explored Alternatives | Trade-offs & Engineering Justification |
 | :--- | :--- | :--- | :--- |

@@ -47,11 +47,16 @@ graph TD
     subgraph Data & Storage Isolation Tier
         Slot_Test --> DB_Test[(Azure SQL: Test)]
         Slot_Test --> Blob_Test[(Blob Storage: Test)]
+        Slot_Test -->|test: prefix| Redis[(Shared Azure Cache for Redis)]
+
         Slot_Stag -->|Sticky Setting| DB_Prod[(Azure SQL: Production)]
         Slot_Prod -->|Sticky Setting| DB_Prod
         Slot_Stag -->|Sticky Setting| Blob_Prod[(Blob Storage: Production)]
         Slot_Prod -->|Sticky Setting| Blob_Prod
-        Slot_Prod -->|Cache Aside| Redis[(Azure Cache for Redis)]
+        
+        %% Production Key-Space Convergence
+        Slot_Stag -->|prod: prefix - Sticky| Redis
+        Slot_Prod -->|prod: prefix| Redis
     end
 
     subgraph Test Microservice Facade [Isolated Testing Perimeter]

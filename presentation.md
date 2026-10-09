@@ -97,10 +97,22 @@ graph TD
 graph TD
     Client[Angular Frontend / Azure SWA] -->|Direct HTTPS API Calls with MSAL Token| AppService[Web API: Azure App Services / Slots]
     
-    subgraph Storage Isolation
-        AppService -->|Cache Aside| Redis[(Azure Cache for Redis)]
-        AppService -->|Relational State| SQL[(Azure SQL Database: Test / Prod)]
-        AppService -->|Docs & GPS Blobs| Blob[(Azure Blob Storage: Test / Prod)]
+    subgraph Storage & Caching Layer
+        SQL[(Azure SQL Database: Test / Prod)]
+        Blob[(Azure Blob Storage: Test / Prod)]
+        Redis[(Shared Azure Cache for Redis)]
+        
+        Slot_Test[[Test Slot]] --> DB_Test
+        Slot_Test --> Blob_Test
+        Slot_Test -->|Logical Naming Prefix: test:*| Redis
+        
+        Slot_Stag[[Staging Slot]] --> DB_Prod
+        Slot_Stag --> Blob_Prod
+        Slot_Stag -->|Logical Naming Prefix: prod:* - Sticky| Redis
+        
+        Slot_Prod[[Production Slot]] --> DB_Prod
+        Slot_Prod --> Blob_Prod
+        Slot_Prod -->|Logical Naming Prefix: prod:*| Redis
     end
 
     subgraph Test Gateway Facade

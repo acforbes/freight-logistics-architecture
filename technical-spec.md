@@ -22,7 +22,7 @@ To prevent severe configuration leaking between Staging and Production environme
 
 ### 📌 Settings that remain STICKY to the Slot (Never Swap):
 * **Database Connection Strings** (`AzureSQL_Prod` vs. `AzureSQL_Stag`).
-* **Azure Cache for Redis** keys and connection configurations.
+* **Azure Cache for Redis** keys and environment connection/prefix configuration (`prod:` vs `test:`).
 * **Azure Entra ID Client Secrets** and registered application scopes.
 * **Azure Blob Storage Container Strings** (`BlobStorage_Prod` vs. `BlobStorage_Test`).
 * **Azure APIM Gateway Ingress Base URIs** (`APIM_Prod_Endpoint` vs. `APIM_Test_Endpoint`).

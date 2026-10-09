@@ -12,6 +12,21 @@ This reference guide defends our technical selection for the Freight Logistics S
 | **Database Migration Model** | **Expand & Contract Parallel Migration** | Complete In-Place Overwrites (Down-time Migrations) | **Pros:** Guarantees structural zero-downtime execution. The production database is evolved to accept both old and new code layers seamlessly during a slot swap.<br>**Cons:** Requires writing temporary nullable fields and data copy scripts for column updates. |
 | **Perimeter Access Control** | **Azure Native App Service CORS Policies** | Application-level middleware custom filtering (`app.UseCors()`) | **Pros:** Offloads preflight evaluation computations entirely from the Kestrel/C# runtime thread pool directly onto Azure's frontend proxy engine. Minimizes compute noise on worker nodes.<br>**Cons:** Requires maintaining environmental configuration arrays across deployment slots inside the Azure Infrastructure-as-Code layer. |
 
+## Slot Configuration Rules (Sticky vs. Swapped App Settings)
+
+To prevent severe configuration leaking between Staging and Production environments during a manual publish and subsequent swap, variables are divided strictly via Azure **Slot Settings**:
+
+### 🔄 Settings that SWAP with the Code:
+* **API Log Levels** (e.g., Verbose in Staging, Warning in Production).
+* **Feature Flags** (New logistics modules currently hidden in production but active in staging).
+
+### 📌 Settings that remain STICKY to the Slot (Never Swap):
+* **Database Connection Strings** (`AzureSQL_Prod` vs. `AzureSQL_Stag`).
+* **Azure Cache for Redis** keys and connection configurations.
+* **Azure Entra ID Client Secrets** and registered application scopes.
+* **Azure Blob Storage Container Strings** (`BlobStorage_Prod` vs. `BlobStorage_Test`).
+* **Azure APIM Gateway Ingress Base URIs** (`APIM_Prod_Endpoint` vs. `APIM_Test_Endpoint`).
+
 ## Detailed Cache Performance Rationale
 
 ### 1. In-Memory Static Lookups (`ResponseCache`)

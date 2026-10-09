@@ -35,35 +35,40 @@ To fully understand the current architecture, this section outlines the technica
 
 ```mermaid
 graph TD
-    subgraph Frontend Layer [Direct CDN Delivery]
-        SWA_Test[Angular Test SWA]
-        SWA_Stag[Angular Staging SWA]
-        SWA_Prod[Angular Prod SWA]
-    end
-
     subgraph Backend App Service Plan [Sequential Swap Chain]
-        SWA_Test -->|Direct HTTPS / CORS Bound| Slot_Test[[Test Slot]]
-        SWA_Stag -->|Direct HTTPS / CORS Bound| Slot_Stag[[Staging Slot]]
-        SWA_Prod -->|Direct HTTPS / CORS Bound| Slot_Prod[[Production Slot]]
+        SWA_Test -->|Direct HTTPS / CORS| Slot_Test[[Test Slot]]
+        SWA_Stag -->|Direct HTTPS / CORS| Slot_Stag[[Staging Slot]]
+        SWA_Prod -->|Direct HTTPS / CORS| Slot_Prod[[Production Slot]]
         
         Slot_Test <-->|1. Test to Staging Swap| Slot_Stag
         Slot_Stag <-->|2. Staging to Prod Swap| Slot_Prod
     end
 
-    subgraph Data & Storage Layer
+    subgraph Data & Storage Isolation Tier
         Slot_Test --> DB_Test[(Azure SQL: Test)]
+        Slot_Test --> Blob_Test[(Blob Storage: Test)]
         Slot_Stag -->|Sticky Setting| DB_Prod[(Azure SQL: Production)]
         Slot_Prod -->|Sticky Setting| DB_Prod
+        Slot_Stag -->|Sticky Setting| Blob_Prod[(Blob Storage: Production)]
+        Slot_Prod -->|Sticky Setting| Blob_Prod
         Slot_Prod -->|Cache Aside| Redis[(Azure Cache for Redis)]
-        Slot_Prod -->|Docs & GPS Blobs| Blob[(Azure Blob Storage)]
     end
 
-    subgraph Secure Microservice Facade
-        Slot_Prod[Web API: Prod Slot] -->|Internal Routing / MTLS| APIM[Azure API Management]
-        PM[Postman Client / Integration Tests] -->|Direct Route Verification| APIM
-        APIM <-->|OAuth2 / Claims Validation| Entra[Azure Entra ID]
-        APIM -->|Serverless Translation| AzFunc[Azure Functions]
-        AzFunc -->|Webhooks / Polling| External[3rd Party Carrier APIs]
+    subgraph Test Microservice Facade [Isolated Testing Perimeter]
+        Slot_Test -->|Outbound Webhooks / MTLS| APIM_Test[APIM Gateway: Test]
+        PM_Test[Postman Client: Test Suites] -->|Direct Request Validation| APIM_Test
+        APIM_Test <-->|Claims Validation| Entra_Test[Azure Entra ID: Test]
+        APIM_Test -->|Serverless Trigger| AzFunc_Test[Azure Functions: Test]
+        AzFunc_Test -->|Simulated Data Loop| External_Test[3rd Party Carrier APIs: Test Endpoints]
+    end
+
+    subgraph Production Microservice Facade [Live Integration Perimeter]
+        Slot_Stag -->|Outbound Webhooks / MTLS - Sticky| APIM_Prod[APIM Gateway: Production]
+        Slot_Prod -->|Outbound Webhooks / MTLS| APIM_Prod
+        PM_Prod[Postman Client: Live Sanity Verifications] -->|Direct Request Validation| APIM_Prod
+        APIM_Prod <-->|Claims Validation| Entra_Prod[Azure Entra ID: Production]
+        APIM_Prod -->|Serverless Trigger| AzFunc_Prod[Azure Functions: Production]
+        AzFunc_Prod -->|Live Logistics Telemetry| External_Prod[3rd Party Carrier APIs: Production Core]
     end
 ```
 

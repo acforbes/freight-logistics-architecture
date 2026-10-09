@@ -37,7 +37,7 @@ DevOps Group Systems Defense
 
 ---
 
-## 1b. Legacy Topology & Production Pain Points
+## 2. Legacy Topology & Production Pain Points
 
 * **High-Risk Promotions:** Had only a Test and Prod environment. Slot swaps were executed *between* Test and Prod directly, with no Staging layer for validation.
 * **Monolithic Complications:** Combined UI and API deployment package. 3rd-party API calls were fired straight from the application runtime, stalling user interfaces when external systems lagged.
@@ -48,7 +48,7 @@ DevOps Group Systems Defense
 
 ---
 
-## 2. Decoupled Multi-Environment Topology
+## 3. Decoupled Multi-Environment Topology
 
  ```mermaid
 graph TD
@@ -59,24 +59,29 @@ graph TD
     end
 
     subgraph Backend App Service Plan [Sequential Swap Chain]
-        SWA_Test -->|Direct UI-to-API| API_Test[[Test Slot]]
+        SWA_Test -->|Direct UI-to-API| Slot_Test[[Test Slot]]
         SWA_Stag -->|Direct UI-to-API| Slot_Stag[[Staging Slot]]
         SWA_Prod -->|Direct UI-to-API| Slot_Prod[[Production Slot]]
         
-        API_Test <-->|1. PROMOTION SWAP| Slot_Stag
+        Slot_Test <-->|1. PROMOTION SWAP| Slot_Stag
         Slot_Stag <-->|2. DEPLOYMENT SWAP| Slot_Prod
     end
 
-    subgraph Relational Data Layer
-        API_Test --> DB_Test[(Azure SQL: Test)]
-        Slot_Stag -->|Slot-Sticky Setting| DB_Prod_Main[(Azure SQL: Prod)]
-        Slot_Prod -->|Slot-Sticky Setting| DB_Prod_Main
+    subgraph Data & Storage Isolation Tier
+        Slot_Test --> DB_Test[(Azure SQL: Test)]
+        Slot_Test --> Blob_Test[(Blob Storage: Test Container)]
+        
+        Slot_Stag -->|Sticky Setting| DB_Prod_Main[(Azure SQL: Prod)]
+        Slot_Prod -->|Sticky Setting| DB_Prod_Main
+        
+        Slot_Stag -->|Sticky Setting| Blob_Prod[(Blob Storage: Prod Container)]
+        Slot_Prod -->|Sticky Setting| Blob_Prod
     end
 ```
 
 ---
 
-## 3. End-to-End Enterprise Identity & Security
+## 4. End-to-End Enterprise Identity & Security
 
 * **Frontend Authentication:** The Angular UI integrates **MSAL (Microsoft Authentication Library)** to handle secure user authentication directly via Microsoft login.
 * **The Token Lifecycle:**
@@ -86,31 +91,35 @@ graph TD
 
 ---
 
-## 4. Component Communication & Integration Architecture
+## 5. Component Communication & Dual-Facade Architecture
 
 ```mermaid
 graph TD
     Client[Angular Frontend / Azure SWA] -->|Direct HTTPS API Calls with MSAL Token| AppService[Web API: Azure App Services / Slots]
     
-    subgraph Integrated Storage & Caching
+    subgraph Storage Isolation
         AppService -->|Cache Aside| Redis[(Azure Cache for Redis)]
-        AppService -->|Relational State| SQL[(Azure SQL Database)]
-        AppService -->|Docs & GPS Blobs| Blob[(Azure Blob Storage)]
+        AppService -->|Relational State| SQL[(Azure SQL Database: Test / Prod)]
+        AppService -->|Docs & GPS Blobs| Blob[(Azure Blob Storage: Test / Prod)]
     end
 
-    subgraph Secure Gateway Facade
-        AppService -->|Outbound Proxy / MTLS| APIM[Azure API Management]
-        PM[Postman Client / Testing] -->|Direct Route Integration| APIM
-        APIM <-->|OAuth2 / JWT Auth| Entra[Azure Entra ID]
-        APIM -->|Internal Route| AzFunc[Azure Functions]
+    subgraph Test Gateway Facade
+        Slot_Test[[Test Slot]] --> APIM_Test[APIM: Test]
+        PM_Test[Postman: Test Suites] --> APIM_Test
+        APIM_Test --> AzFunc_Test[Azure Functions: Test] --> Ext_Test[3rd Party APIs: Test]
     end
-    
-    AzFunc -->|Webhooks / Polling| External[3rd Party Freight/Carrier APIs]
+
+    subgraph Production Gateway Facade
+        Slot_Stag[[Staging Slot]] -->|Sticky Connection| APIM_Prod[APIM: Prod]
+        Slot_Prod[[Production Slot]] --> APIM_Prod
+        PM_Prod[Postman: Live Checks] --> APIM_Prod
+        APIM_Prod --> AzFunc_Prod[Azure Functions: Prod] --> Ext_Prod[3rd Party APIs: Prod]
+    end
 ```
 
 ---
 
-## 5. Compute State & Schema Continuity
+## 6. Compute State & Schema Continuity
 
 * **Frontend Delivery:** Angular static web assets are directly published to their respective Azure SWA instances. No slot switches are performed on the CDN edge.
 * **Backend Zero-Downtime Swaps:** API code is published to the **Staging Slot** and fully warmed up by hitting the root runtime path prior to traffic routing redirection.
@@ -118,7 +127,7 @@ graph TD
 
 ---
 
-## 6. Database Tuning & Cloud Cost Controls
+## 7. Database Tuning & Cloud Cost Controls
 
 To prevent unbounded data growth and optimize compute costs within Azure SQL, the relational layer implements two lifecycle architectures:
 
@@ -133,7 +142,7 @@ To prevent unbounded data growth and optimize compute costs within Azure SQL, th
 
 ---
 
-## 7. Comprehensive 4-Tier Caching Topology
+## 8. Comprehensive 4-Tier Caching Topology
 
 To aggressively maximize performance, caching layers are partitioned by data change frequency:
 
@@ -146,7 +155,7 @@ To aggressively maximize performance, caching layers are partitioned by data cha
 
 ---
 
-## 8. Tiered Route Resolution Pipeline
+## 9. Tiered Route Resolution Pipeline
 
 When a user requests multi-city route GPS coordinates, the Web API processes the request through a strict **3-tier failover lifecycle**:
 
@@ -165,7 +174,7 @@ graph TD
 
 ---
 
-## 9. Q&A and Engineering Appendix
+## 10. Q&A and Engineering Appendix
 
 * Open for peer review regarding schema management, token validation lifetimes, and caching boundaries.
 * **Deep dives available in repository:**

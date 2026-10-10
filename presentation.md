@@ -23,7 +23,7 @@ style: |
 # Freight Logistics Architecture
 ### Integrated Cloud Infrastructure & Secure Microservice Gateways
 **Technical Presentation**
-DevOps Group Systems Defense
+Architectural Optimization & Systems Modernization
 
 ---
 
@@ -39,7 +39,7 @@ DevOps Group Systems Defense
 
 ## 2. Legacy Topology & Production Pain Points
 
-* **High-Risk Promotions:** Had only a Test and Prod environment. Slot swaps were executed *between* Test and Prod directly, with no Staging layer for validation.
+* **High-Risk Promotions:** Had only a Test and Production environment. Slot swaps were executed *between* Test and Production directly, with no Staging layer for validation.
 * **Monolithic Complications:** Combined UI and API deployment package. 3rd-party API calls were fired straight from the application runtime, stalling user interfaces when external systems lagged.
 * **Severe Memory & Database Pressure:**
     * **No Caching Layer:** Typeaheads relied on a massive, preloaded city-list object held entirely in API server memory.
@@ -134,14 +134,14 @@ graph TD
 ## 6. Compute State & Schema Continuity
 
 * **Frontend Delivery:** Angular static web assets are directly published to their respective Azure SWA instances. No slot switches are performed on the CDN edge.
-* **Backend Zero-Downtime Swaps:** API code is published to the **Staging Slot** and fully warmed up by hitting the root runtime path prior to traffic routing redirection.
-* **Database Drift Defense:** Employing an **Expand and Contract pattern**. Schema migrations are pushed *before* the slot swap occurs using backward-compatible, non-breaking mutations.
+* **Backend Zero-Downtime Swaps:** API code is published to the **Test Slot** and fully warmed up via the root runtime path, followed by sequential slot swaps to **Staging** and then to **Production** with zero traffic interruption.
+* **Database Drift Logic:** Employing an **Expand and Contract pattern**. Schema migrations are pushed *before* the slot swap occurs using backward-compatible, non-breaking mutations.
 
 ---
 
 ## 7. Database Tuning & Cloud Cost Controls
 
-To prevent unbounded data growth and optimize compute costs within Azure SQL, the relational layer implements two lifecycle architectures:
+To prevent unbounded data growth and optimize compute costs within Azure SQL, the database tuning strategy deploys two lifecycle architectures:
 
 * **Horizontal Table Partitioning:**
     * High-volume `AuditLogs` are partitioned by **date ranges**.

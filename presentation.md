@@ -190,8 +190,9 @@ graph TD
 
 * Open for peer review regarding schema management, token validation lifetimes, and caching boundaries.
 * **Deep dives available in repository:**
-    * Appendix A: System Component Trade-off Matrix
-    * Appendix B: Dynamic Slot Swap & State Boundary Rules
-    * Appendix C: Cache Key & Storage Lifecycle Strategy
+    * Appendix A: Architectual Trade-off Matrix
+    * Appendix B: Slot Configuration Rules (Sticky vs. Swapped App Settings)
+    * Appendix C: Detailed Cache Performance Rationale
+    * Appendix D: Isolated Testability Framework (APIM & Postman)
 
 ---

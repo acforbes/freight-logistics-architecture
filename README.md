@@ -1,13 +1,13 @@
 # Freight Logistics System Architecture
 
-An enterprise cloud-native architecture for a mission-critical freight logistics web platform. This system decouples static client delivery from stateful compute layers, utilizes a strict 4-tier caching model to minimize database load, secures its application boundaries using MSAL with Microsoft login, and encapsulates external serverless microservices behind an internal API Management facade.
+An enterprise cloud-native architecture for a mission-critical freight logistics web platform. This system decouples static client delivery from stateful compute layers, utilizes a strict 4-tier caching model to minimize database load, secures its application boundaries using MSAL with Microsoft login, and encapsulates serverless microservices behind an API Management facade secured by Azure Entra ID.
 
 ## 🚀 Architectural Pillars
 
 * **Zero-Downtime Infrastructure:** Blue/Green style code promotions via Azure App Service Deployment Slots.
 * **Enterprise Identity Federation:** Front-end access secured via MSAL (Microsoft Authentication Library) bound to Azure Entra ID RBAC profiles.
-* **Strict State Isolation:** Unified physical environment boundaries for Test/Dev, with logical key-space isolation for shared caching tiers.
-* **Cost-Controlled Compute:** A 3-tier hybrid route resolution pipeline designed to shield external computing budgets (Azure Maps API).
+* **Dual-Tier Key-Space Isolation:** Unified caching key-space environments partitioned by tier — lower environments run under a `test:` state profile, while Staging and Production utilize `prod:`.
+* **Cost-Controlled Compute:** A 3-tier hybrid multi-city route resolution pipeline designed to shield external computing budgets (Azure Maps API).
 * **Decoupled Delivery Lifecycles:** Direct CDN asset publishing for front-end layers, fully isolated from backend binary modifications.
 * **Optimized Data Lifecycles:** Horizontal date-range partitioning and rolling data retention to enforce strict budget caps on Azure SQL.
 
@@ -24,7 +24,7 @@ To fully understand the current architecture, this section outlines the technica
 | **Release Confidence** | Direct Slot Swap from Test ➔ Prod. Zero safety staging buffer. | **Isolated Test bed** + **Staging-to-Prod Slot Swap** lifecycle. | Code is smoke-tested against live environment strings prior to routing production traffic. |
 | **UI/API Lifecycle** | Monolithic combined UI/API container deployment package. | **Decoupled:** Direct CDN SWA publishing + isolated API App Service. | UI design polishes bypass backend restarts; assets scale globally on the CDN edge instantly. |
 | **Perimeter Traffic** | Shared domain space (Zero CORS overhead required). | Cross-Origin boundaries isolated via target App Service policies. | Employs explicit browser-level preflight headers and origin restrictions (`Allow-Credentials`). |
-| **Integration Boundary** | 3rd-party APIs invoked straight from Web API threads, causing UI thread stalls. | **Internal APIM Facade** + Serverless **Azure Functions** proxy layer. | Fragile external dependencies are sandboxed; failures or API lag never impact core thread loops. |
+| **Integration Boundary** | 3rd-party APIs invoked straight from Web API threads, causing UI thread stalls. | **APIM Facade** + Serverless **Azure Functions** proxy layer. | Fragile external dependencies are sandboxed; failures or API lag never impact core thread loops. |
 | **Search Performance** | Massive, resource-heavy city list array preloaded in server API RAM memory. | Dedicated distributed **Azure Cache for Redis** index using `prod:typeahead:*` tokens. | Drastically reduces Web API RAM footprints while providing sub-10ms autocompletion. |
 | **Route Performance** | Unbounded, heavy relational SQL tables tracking multi-city GPS paths. | **3-Tier Fallback Loop:** `.NET ResponseCache` ➔ **Azure Blob Storage JSON** ➔ Azure Maps. | Shrinks database engine size; reduces Azure Maps compute expenses by caching static assets as immutable objects. |
 | **Database Resiliency** | No data partitioning or archival rules; query lookups on `AuditLogs` timed out. | Horizontal **Date-Range Partitioning** (monthly) + rolling 90-day diagnostic retention. | Query engines use **partition pruning** for sub-second audit returns; hard-caps database file size growth. |
@@ -151,7 +151,7 @@ The system enforces a **4-tier caching strategy** optimized around data longevit
 | **Tier 1** | `.NET ResponseCache` | Static System Lookups | Hard-capped local memory allocation; zero network I/O overhead. |
 | **Tier 2** | `Azure Cache for Redis` | Dropdown Typeaheads | Shared instance isolated logically via key prefixing (`prod:typeahead:*` vs. `test:typeahead:*`). |
 | **Tier 3** | Hybrid Cache-Aside / Blob | Multi-City Route GPS Coordinates | 24-hour `.NET ResponseCache` expiration backed by persistent JSON file writes on Azure Blob Storage. |
-| **Tier 4** | `Azure Blob Storage` | Invoices / Bills of Lading | Cold, append-only document container storage. |
+| **Tier 4** | `Azure Blob Storage` | Cross-Border Documentation / Bills of Lading | Cold, append-only document container storage. |
 
 ### Multi-City Route Resolution Fallback Flow
 1. **Read Tier 1:** Check local `.NET ResponseCache` (Valid for 24 hours).
@@ -163,8 +163,8 @@ The system enforces a **4-tier caching strategy** optimized around data longevit
 ## 🔒 Facade Security & Testability Blueprint
 
 ### Azure API Management (APIM) Positioning
-Instead of facing the public internet, APIM is restricted to serving as an internal integration wall. 
-* **Ingress Restriction:** Only authenticated requests from the primary Web API or authenticated testing infrastructure can cross the gateway boundary.
+APIM is restricted to serving as a third-party integration wall. 
+* **Ingress Restriction:** Only authenticated requests from the primary Web API, organizational group entities, or testing infrastructure can cross the gateway boundary.
 * **Token Hardening:** Entra ID issues strict Role-Based Access Control (RBAC) claims. APIM cryptographically validates these JWT signatures at the edge to shelter downstream Azure Functions from bad requests.
 
 ### Isolated Testing Engine (Postman)

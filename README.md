@@ -1,37 +1,51 @@
 # Freight Logistics System Architecture
 
-An enterprise cloud-native architecture for a mission-critical freight logistics web platform. This system decouples static client delivery from stateful compute layers, utilizes a strict 4-tier caching model to minimize database load, secures its application boundaries using MSAL with Microsoft login, and encapsulates serverless microservices behind an API Management facade secured by Azure Entra ID.
+An enterprise cloud-native architecture for a mission-critical freight logistics web platform. This system decouples static client interface from stateful API layers, utilizes a strict 4-tier caching model to minimize database load, secures external using MSAL with Microsoft login, and leverages serverless microservices behind an API Management facade secured by Azure Entra ID.
 
-## 🚀 Architectural Pillars
+## Architectural Pillars
 
 * **Zero-Downtime Infrastructure:** Blue/Green style code promotions via Azure App Service Deployment Slots.
 * **Enterprise Identity Federation:** Front-end access secured via MSAL (Microsoft Authentication Library) bound to Azure Entra ID RBAC profiles.
-* **Dual-Tier Key-Space Isolation:** Unified caching key-space environments partitioned by tier — lower environments run under a `test:` state profile, while Staging and Production utilize `prod:`.
-* **Cost-Controlled Compute:** A 3-tier hybrid multi-city route resolution pipeline designed to shield external computing budgets (Azure Maps API).
-* **Decoupled Delivery Lifecycles:** Direct CDN asset publishing for front-end layers, fully isolated from backend binary modifications.
-* **Optimized Data Lifecycles:** Horizontal date-range partitioning and rolling data retention to enforce strict budget caps on Azure SQL.
+* **Dual-Tier Caching Profile:** Unified caching environments partitioned by tier — lower environments run under a `test:` state profile, while Staging and Production utilize `prod:`.
+* **Cost-Controlled Compute:** A 3-tier hybrid multi-city truck route logic designed to reduce compute overhead (Azure Maps API).
+* **Decoupled Deployment:** Direct CDN publishing for UI, isolated from backend modifications.
+* **Optimized Data Lifecycles:** Date-range partitioning and data retention policies to enforce budget caps on Azure SQL.
+* **Refreshed Test Data:** Periodic database copy from production environment to test followed by immediate scale-down of test compute and storage.
 
 ---
 
-## 🔄 Architectural Evolution: System Modernization Blueprint
+## Architectural Evolution: System Modernization
 
-To fully understand the current architecture, this section outlines the technical transformations implemented to resolve critical architectural debt from the legacy deployment.
+To fully understand the current architecture, this section outlines the technical transformations I implemented to resolve critical architectural debt from the legacy deployment I inherited.
 
 ### System Comparison Profile
 
-| Architectural Vector | Legacy Topology ("Before") | Modernized Architecture ("After") | Engineering & Financial Impact |
+| Architectural Vector | Legacy Topology ("Before") | Modernized Architecture ("After") | Engineering & Service Tier Impact |
 | :--- | :--- | :--- | :--- |
-| **Release Confidence** | Direct Slot Swap from Test ➔ Prod. Zero safety staging buffer. | **Isolated Test bed** + **Staging-to-Prod Slot Swap** lifecycle. | Code is smoke-tested against live environment strings prior to routing production traffic. |
-| **UI/API Lifecycle** | Monolithic combined UI/API container deployment package. | **Decoupled:** Direct CDN SWA publishing + isolated API App Service. | UI design polishes bypass backend restarts; assets scale globally on the CDN edge instantly. |
-| **Perimeter Traffic** | Shared domain space (Zero CORS overhead required). | Cross-Origin boundaries isolated via target App Service policies. | Employs explicit browser-level preflight headers and origin restrictions (`Allow-Credentials`). |
-| **Integration Boundary** | 3rd-party APIs invoked straight from Web API threads, causing UI thread stalls. | **APIM Facade** + Serverless **Azure Functions** proxy layer. | Fragile external dependencies are sandboxed; failures or API lag never impact core thread loops. |
-| **Search Performance** | Massive, resource-heavy city list array preloaded in server API RAM memory. | Dedicated distributed **Azure Cache for Redis** index using `prod:typeahead:*` tokens. | Drastically reduces Web API RAM footprints while providing sub-10ms autocompletion. |
-| **Route Performance** | Unbounded, heavy relational SQL tables tracking multi-city GPS paths. | **3-Tier Fallback Loop:** `.NET ResponseCache` ➔ **Azure Blob Storage JSON** ➔ Azure Maps. | Shrinks database engine size; reduces Azure Maps compute expenses by caching static assets as immutable objects. |
-| **Database Resiliency** | No data partitioning or archival rules; query lookups on `AuditLogs` timed out. | Horizontal **Date-Range Partitioning** (monthly) + rolling 90-day diagnostic retention. | Query engines use **partition pruning** for sub-second audit returns; hard-caps database file size growth. |
+| **Release Confidence** | Direct Slot Swap from Test ➔ Prod. Zero safety staging buffer. | **Isolated Test bed** + **Staging-to-Prod Slot Swap** lifecycle. | Code is smoke-tested against live environment prior to production deployment. |
+| **UI/API Lifecycle** | Monolithic combined UI/API deployment package. | **Decoupled:** Direct CDN SWA publishing + isolated API App Service. | UI deployments bypass backend restarts. |
+| **Perimeter Traffic** | Shared domain space (Zero CORS overhead required). | Cross-Origin limited via API App Service policies. | Employs explicit browser-level preflight headers and origin restrictions (`Allow-Credentials`). |
+| **Integration Boundary** | 3rd-party APIs invoked straight from Web API, causing UI stalls. | **APIM Facade** + Serverless **Azure Functions** proxy layer. | Fragile external dependencies are sandboxed; eliminating impact from failures or API lag. |
+| **Search Performance** | Massive, resource-heavy city list preloaded in API memory. | Dedicated **Azure Cache for Redis** index using `env:typeahead:*` pattern. | Reduced Web API RAM footprint while providing fast autocompletion. |
+| **Route Performance** | Heavy SQL table tracking multi-city GPS routes. | **3-Tier Fallback Loop:** `.NET ResponseCache` ➔ **Azure Blob Storage JSON** ➔ Azure Maps. | Shrinks database size; reduces Azure Maps expenses by caching static data. |
+| **Database Resiliency** | No data partitioning or archival rules; queries on `AuditLogs` timed out. | **Date-Range Partitioning** (monthly) + rolling 90-day log retention. | Query engines use **partition pruning** for fast audit lookups; greatly reduces database size growth. |
+| **Test Database Scale** | Test database environment a direct image and service level copy of Production with log tables truncation | Implemented database copy SOP to include shrinking database size, lowering compute DTUs, and reducing total file size | Greatly reduced cost overhead for test database |
+
+### Financial Breakdown
+| Service | Change in Tier/Scale/Usage | Financial Impact |
+| :--- | :--- | ---: |
+| **Application Service** | Service Plan reduced: Premium v3 P2v3 to P1v3 | ($255/mo) |
+| **Static Web App** | New Service Plan: Standard | $9/mo |
+| **Azure Functions Service** | New Service Plan: Premium v3 P0v3 | $127/mo |
+| **SQL Azure - Prod** | Compute/Storage: **Capped** at 1600 DTU/750GB | $0/mo |
+| **SQL Azure - Test** | Compute/Storage: 1600 DTU/750GB to 400 DTU/250GB | ($1817/mo) |
+| **Azure Cache for Redis** | New Service Plan: Balanced B1 | $51/mo |
+| **Azure Maps** | Reduced API calls | ($100/mo) |
+| **Total** |  | ($1985/mo) |
 
 ---
 
-## 🗺️ System Topology
+## System Topology
 
 ```mermaid
 graph TD
@@ -79,9 +93,9 @@ graph TD
 
 ---
 
-## 🔒 Enterprise Identity & Secure Token Flow (MSAL + Entra ID)
+## Enterprise Identity & Secure Token Flow (MSAL + Entra ID)
 
-The application implements a zero-trust identity architecture mapping frontend presentation directly to backend compute capabilities:
+The application implements a zero-trust identity architecture mapping UI directly to API:
 
 ```mermaid
 graph TD
@@ -93,56 +107,56 @@ graph TD
     WebAPI <-->|5. Cryptographic Claim Verification| Entra[Azure Entra ID]
 ```
 
-### Authentication & Authorization Details
+### Authentication & Authorization
 1. **Client-Side Guarding (Angular):** Routes within the Angular app are protected using native MSAL Guards. Unauthenticated users are automatically redirected to the organizational Microsoft sign-in page.
-2. **The Interceptor Pattern:** An MSAL Interceptor maps the target backend API endpoints. It handles silent token acquisition and background token renewal, ensuring users are never interrupted during prolonged logistics dispatch sessions.
+2. **The Interceptor Pattern:** An MSAL Interceptor maps the target backend API endpoints. It handles silent token acquisition and background token renewal, ensuring users are never interrupted during prolonged logistics load management sessions.
 3. **API Perimeter Validation:** The .NET Web API extracts the claims array from the decrypted token payload to verify organizational tenant parameters and user-specific roles before allowing operations on core database or storage entities.
 
 ---
 
-## 🛠️ Environmental Framework & Release Strategy
+## Environmental Framework & Release Strategy
 
 ### 1. Frontend Promotion (Azure Static Web Apps)
-The Angular application compiles against environment-specific profile variables (`environment.prod.ts`). Compiled assets are published **directly** to their respective environment containers. Front-end visual deployments are fully insulated from backend container recycling.
+The Angular application compiles against environment-specific profile variables (`environment.prod.ts`). Compiled assets are published **directly** to their respective environment containers. Front-end deployments are fully insulated from API deployments.
 
-### ### 🌐 Cross-Origin Resource Sharing (CORS) Enforcement
-Because the UI assets and API binaries exist on fundamentally decoupled domain endpoints, a strict CORS matrix is enforced at the App Service tier:
+### Cross-Origin Resource Sharing (CORS) Enforcement
+Because the UI and API exist on decoupled domain endpoints, a strict CORS matrix is enforced in the API service:
 * **Preflight (OPTIONS) Resolution:** The App Service is configured to intercept and validate cross-origin preflight requests before execution.
-* **Domain Restrictions:** Whitelists are configured natively in Azure on a per-slot basis, mapping the Test, Staging, and Production SWA domain locations respectively. Wildcards (`*`) are strictly prohibited.
-* **Credentials Support:** `Access-Control-Allow-Credentials` is toggled on to allow safe cryptographic transmissions of bearer tokens derived from the MSAL pipeline.
+* **Domain Restrictions:** Whitelists are configured natively in the API on a per-domain basis for Test, Staging, and Production SWA domains. Wildcards (`*`) are strictly prohibited.
+* **Credentials Support:** `Access-Control-Allow-Credentials` is toggled on to allow bearer tokens orginating from MSAL.
 
 ### 2. Backend Promotion (Sequential App Service Slot Chain)
-The .NET Web API utilizes a multi-step execution swap strategy across the **Test**, **Staging**, and **Production** slots inside a unified App Service Plan to enforce an immutable chain of custody:
+The .NET Web API utilizes a multi-step execution swap strategy across the **Test**, **Staging**, and **Production** slots inside a unified App Service Plan to enforce a chain of custody:
 
-* **Step 1: The Staging Promotion:** The latest code is manually published and validated in the `Test Slot`. To promote it, a swap is executed between `Test` and `Staging`. The binaries shift, and the code is smoke-tested against live production infrastructure dependencies in the isolated `Staging Slot`.
-* **Step 2: The Production Deployment:** A second swap is executed between `Staging` and `Production`. This brings the newly verified code live to users instantly with zero downtime.
-* **The Instant Rollback Safety Net:** Following the final swap, the `Staging Slot` dynamically retains the *previous* live production binary. If an anomaly surfaces in production, a simple reverse swap instantly restores the stable environment state, guaranteeing a near-zero Recovery Time Objective (RTO).
+* **Step 1: The Staging Promotion:** The latest code is manually published and validated in the `Test Slot`. To promote it, a swap is executed between `Test` and `Staging`. The release is smoke-tested against live production infrastructure dependencies in the isolated `Staging Slot`.
+* **Step 2: The Production Deployment:** A second swap is executed between `Staging` and `Production`. This brings the verified release live to users instantly with zero downtime.
+* **The Instant Rollback Safety Net:** Following the final swap, the `Staging Slot` dynamically retains the *previous* live production release. If an anomaly surfaces in production, a simple reverse swap instantly restores the stable environment release, guaranteeing a near-zero Recovery Time Objective (RTO).
 
 ### 3. Database Schema Continuity (Azure SQL)
 To prevent runtime exceptions during slot swaps, this repository mandates the **Expand and Contract (Parallel Change) Pattern**:
 1. **Expand:** Schema migrations (adding nullable fields or new lookup tables) are executed manually on the Production Database *prior to a swap*.
-2. **Swap:** The slot swap is executed. Both old and new API binaries simultaneously interact with the database safely.
+2. **Swap:** The slot swap is executed. Both old and new API releases simultaneously interact with the database safely.
 3. **Contract:** Legacy fields/columns are removed after the environment completely stabilizes.
 
 ---
 
-## 💾 Database Optimization & Lifecycle Management (Azure SQL)
+## Database Optimization & Lifecycle Management (Azure SQL)
 
 To prevent unbounded database size growth and maintain rapid query performance as historical freight data accumulates, Azure SQL employs two lifecycle management strategies:
 
 ### 1. Horizontal Partitioning for Audit Trails
 * **The Problem:** The `AuditLogs` table logs every structural change (e.g., dispatch modifications, user overrides, financial updates), causing it to grow by millions of rows rapidly.
-* **The Solution:** The table is **partitioned by date ranges** (e.g., monthly chunks) utilizing Azure SQL Partition Functions and Schemes. 
-* **The Benefit:** When a dispatcher requests an audit trail for a specific date range, the SQL engine executes **partition pruning**—completely ignoring irrelevant months. This keeps index sizes small, optimizes RAM usage, and maintains sub-second query execution times.
+* **The Solution:** The table is **partitioned by date ranges** (e.g., monthly chunks) utilizing Azure SQL Partition Functions and Schemes.
+* **The Benefit:** When a dispatcher requests an audit trail for a specific date range, the SQL engine executes **partition pruning**—completely ignoring irrelevant months. This keeps index sizes small, optimizes RAM usage, and maintains fast query execution times.
 
 ### 2. Time-Bounded Log Retention
-* **The Problem:** System telemetry, application errors, and third-party API usage logs (`ApplicationLogs`) grow aggressively but lose their clinical value after a few months.
-* **The Solution:** A **date-range retention period** (e.g., a rolling 90-day window) is strictly enforced. 
-* **The Benefit:** An automated, low-priority cleanup process continuously purges records older than the retention boundary. This hard-caps the database file footprint, prevents data storage costs from spiraling, and ensures database backups and restoration times remain lean.
+* **The Problem:** Handled exception logs and third-party API logs grow aggressively but lose their clinical value after a few months.
+* **The Solution:** A **date-range retention period** (e.g., a rolling 90-day window) is enforced.
+* **The Benefit:** An automated, low-priority cleanup process continuously purges records older than the retention boundary. This reduces the database size, prevents data storage costs from spiraling, and ensures database backups and restoration times remain lean.
 
 ---
 
-## ⚡ Data Volatility & Caching Lifecycle
+## Data Volatility & Caching Lifecycle
 
 The system enforces a **4-tier caching strategy** optimized around data longevity:
 
@@ -151,16 +165,16 @@ The system enforces a **4-tier caching strategy** optimized around data longevit
 | **Tier 1** | `.NET ResponseCache` | Static System Lookups | Hard-capped local memory allocation; zero network I/O overhead. |
 | **Tier 2** | `Azure Cache for Redis` | Dropdown Typeaheads | Shared instance isolated logically via key prefixing (`prod:typeahead:*` vs. `test:typeahead:*`). |
 | **Tier 3** | Hybrid Cache-Aside / Blob | Multi-City Route GPS Coordinates | 24-hour `.NET ResponseCache` expiration backed by persistent JSON file writes on Azure Blob Storage. |
-| **Tier 4** | `Azure Blob Storage` | Cross-Border Documentation / Bills of Lading | Cold, append-only document container storage. |
+| **Tier 4** | `Azure Blob Storage` | Cross-Border Documentation / Bills of Lading | Cold, append-only document storage. |
 
 ### Multi-City Route Resolution Fallback Flow
 1. **Read Tier 1:** Check local `.NET ResponseCache` (Valid for 24 hours).
-2. **Read Tier 2:** If missed, fetch the standardized object string from **Azure Blob Storage** based on a deterministic route waypoint hash naming convention (`route_[hash].json`). Re-populate Tier 1.
-3. **Compute Tier 3:** If the file is not found, invoke **Azure Maps API**. Stream the resulting data payload back to the client, serialize it immediately to Blob Storage for subsequent runs, and warm up the cache layers.
+2. **Read Tier 2:** If missed, fetch the standardized object string from **Azure Blob Storage** based on a route waypoint hash naming convention (`route_[hash].json`). Re-populate Tier 1.
+3. **Compute Tier 3:** If the file is not found, invoke **Azure Maps API**. Stream the resulting data payload back to the client, serialize it immediately to Blob Storage for subsequent runs, and refresh the cache.
 
 ---
 
-## 🔒 Facade Security & Testability Blueprint
+## Third-Party API Facade Security & Testability
 
 ### Azure API Management (APIM) Positioning
 APIM is restricted to serving as a third-party integration wall. 
@@ -168,4 +182,4 @@ APIM is restricted to serving as a third-party integration wall.
 * **Token Hardening:** Entra ID issues strict Role-Based Access Control (RBAC) claims. APIM cryptographically validates these JWT signatures at the edge to shelter downstream Azure Functions from bad requests.
 
 ### Isolated Testing Engine (Postman)
-Because APIM completely wraps all external third-party interactions, developers can validate microservice behaviors without firing up the Angular UI. Targeting APIM directly via **Postman** allows for the isolated testing of rate-limiting, error handling, webhook response mocking, and Entra ID scope parameters.
+Because APIM completely wraps all external third-party interactions, developers can validate microservice behaviors without firing up the Angular UI. Targeting APIM directly via **Postman** allows for the isolated testing of error handling, webhook response mocking, and Entra ID scope parameters.

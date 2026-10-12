@@ -29,19 +29,7 @@ To fully understand the current architecture, this section outlines the technica
 | **Search Performance** | Massive, resource-heavy city list preloaded in API memory. | Dedicated **Azure Cache for Redis** index using `env:typeahead:*` pattern. | Reduced Web API RAM footprint while providing fast autocompletion. |
 | **Route Performance** | Heavy SQL table tracking multi-city GPS routes. | **3-Tier Fallback Loop:** `.NET ResponseCache` ➔ **Azure Blob Storage JSON** ➔ Azure Maps. | Shrinks database size; reduces Azure Maps expenses by caching static data. |
 | **Database Resiliency** | No data partitioning or archival rules; queries on `AuditLogs` timed out. | **Date-Range Partitioning** (monthly) + rolling 90-day log retention. | Query engines use **partition pruning** for fast audit lookups; greatly reduces database size growth. |
-| **Test Database Scale** | Test database environment a direct image and service level copy of Production with log tables truncation | Implemented database copy SOP to include shrinking database size, lowering compute DTUs, and reducing total file size | Greatly reduced cost overhead for test database |
-
-### Financial Breakdown
-| Service | Change in Tier/Scale/Usage | Financial Impact |
-| :--- | :--- | ---: |
-| **Application Service** | Service Plan reduced: Premium v3 P2v3 to P1v3 | ($255/mo) |
-| **Static Web App** | New Service Plan: Standard | $9/mo |
-| **Azure Functions Service** | New Service Plan: Premium v3 P0v3 | $127/mo |
-| **SQL Azure - Prod** | Compute/Storage: **Capped** at 1600 DTU/750GB | $0/mo |
-| **SQL Azure - Test** | Compute/Storage: 1600 DTU/750GB to 400 DTU/250GB | ($1817/mo) |
-| **Azure Cache for Redis** | New Service Plan: Balanced B1 | $51/mo |
-| **Azure Maps** | Reduced API calls | ($100/mo) |
-| **Total** |  | ($1985/mo) |
+| **Test Database Scale** | Test database environment a direct image and service level copy of Production with log tables truncation | Implemented database copy SOP to include shrinking database, lowering compute DTUs, and reducing total database size | Greatly reduced cost overhead for test database |
 
 ---
 
@@ -112,18 +100,18 @@ graph TD
 2. **The Interceptor Pattern:** An MSAL Interceptor maps the target backend API endpoints. It handles silent token acquisition and background token renewal, ensuring users are never interrupted during prolonged logistics load management sessions.
 3. **API Perimeter Validation:** The .NET Web API extracts the claims array from the decrypted token payload to verify organizational tenant parameters and user-specific roles before allowing operations on core database or storage entities.
 
+### Cross-Origin Resource Sharing (CORS) Enforcement
+Because the UI and API exist on decoupled domain endpoints, a strict CORS matrix is enforced in the API service:
+* **Preflight (OPTIONS) Resolution:** The App Service is configured to intercept and validate cross-origin preflight requests before execution.
+* **Domain Restrictions:** Whitelists are configured natively in the API on a per-domain basis for Test, Staging, and Production SWA domains. Wildcards (`*`) are strictly prohibited.
+* **Credentials Support:** `Access-Control-Allow-Credentials` is toggled on to allow bearer tokens orginating from MSAL.
+
 ---
 
 ## Environmental Framework & Release Strategy
 
 ### 1. Frontend Promotion (Azure Static Web Apps)
 The Angular application compiles against environment-specific profile variables (`environment.prod.ts`). Compiled assets are published **directly** to their respective environment containers. Front-end deployments are fully insulated from API deployments.
-
-### Cross-Origin Resource Sharing (CORS) Enforcement
-Because the UI and API exist on decoupled domain endpoints, a strict CORS matrix is enforced in the API service:
-* **Preflight (OPTIONS) Resolution:** The App Service is configured to intercept and validate cross-origin preflight requests before execution.
-* **Domain Restrictions:** Whitelists are configured natively in the API on a per-domain basis for Test, Staging, and Production SWA domains. Wildcards (`*`) are strictly prohibited.
-* **Credentials Support:** `Access-Control-Allow-Credentials` is toggled on to allow bearer tokens orginating from MSAL.
 
 ### 2. Backend Promotion (Sequential App Service Slot Chain)
 The .NET Web API utilizes a multi-step execution swap strategy across the **Test**, **Staging**, and **Production** slots inside a unified App Service Plan to enforce a chain of custody:

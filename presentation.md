@@ -21,9 +21,8 @@ style: |
 ---
 
 # Freight Logistics Architecture
-### Integrated Cloud Infrastructure & Secure Microservice Gateways
-**Technical Presentation**
-Architectural Optimization & Systems Modernization
+### Systems Modernization & Architectural Optimization
+**Presenter:** Adrian Forbes (Team Lead, Full Stack Engineering) | Solution Architect Senior
 
 ---
 
@@ -37,18 +36,48 @@ Architectural Optimization & Systems Modernization
 
 ---
 
-## 2. Legacy Topology & Production Pain Points
+## 2. Legacy Architectural Pain Points
 
 * **High-Risk Promotions:** Had only a Test and Production environment. Slot swaps were executed *between* Test and Production directly, with no Staging layer for validation.
-* **Monolithic Complications:** Combined UI and API deployment package. 3rd-party API calls were fired straight from the application runtime, stalling user interfaces when external systems lagged.
+* **Monolithic Complications:**
+    * **Combined UI and API Deployment Package:** Build/publish cycles took at least 10 minutes and would sometimes fail, causing additional development downtime.
+    * **3rd-party API Lag:** API calls were fired straight from the application runtime, stalling user interfaces when external systems lagged.
 * **Severe Memory & Database Pressure:**
-    * **No Caching Layer:** Typeaheads relied on a massive, preloaded city-list object held entirely in API server memory.
+    * **No Caching Layer:** Typeaheads relied on a massive, preloaded city-list object held entirely in API server memory. Heavy Order/Loads and Tracking pages were slow to load from many API requests for lookup table data.
     * **Storage Exhaustion:** Multi-city GPS coordinate paths sat inside a bloated database table. No partitioning on `AuditLogs` resulted in query timeouts.
     * **No Storage Offloading:** No document management engine or file storage was utilized.
 
 ---
 
-## 3. Decoupled Multi-Environment Topology
+## 3. Legacy Topology
+
+ ```mermaid
+graph LR
+    subgraph Environment [App Service / Hosting Environment]
+        subgraph Test [Test Slot]
+            A[Monolith UI / API]
+        end
+
+        subgraph Prod [Production Slot]
+            B[Monolith UI / API]
+        end
+        
+        %% Swap Action
+        A <--> |Deployment Swap| B
+    end
+
+    subgraph Data [Data Tier]
+        DB_Test[(Azure SQL: Test)]
+        DB_Prod[(Azure SQL: Prod)]
+    end
+
+    %% Database Connections
+    A ---> DB_Test
+    B ---> DB_Prod
+```
+---
+
+## 4. Decoupled Multi-Environment Topology
 
  ```mermaid
 graph TD
@@ -81,7 +110,15 @@ graph TD
 
 ---
 
-## 4. End-to-End Enterprise Identity & Security
+## 5. Compute State & Schema Continuity
+
+* **Frontend Delivery:** Angular static web assets are directly published to their respective Azure SWA instances. No slot switches are performed on the CDN edge.
+* **Backend Zero-Downtime Swaps:** API code is published to the **Test Slot** and fully warmed up via the root runtime path, followed by sequential slot swaps to **Staging** and then to **Production** with zero traffic interruption.
+* **Database Drift Logic:** Employing an **Expand and Contract pattern**. Schema migrations are pushed *before* the slot swap occurs using backward-compatible, non-breaking mutations.
+
+---
+
+## 5. Existing End-to-End Enterprise Identity & Security
 
 * **Frontend Authentication:** The Angular UI integrates **MSAL (Microsoft Authentication Library)** to handle secure user authentication directly via Microsoft login.
 * **The Token Lifecycle:**
@@ -89,32 +126,18 @@ graph TD
     * An internal HTTP interceptor attaches the token to all direct backend API requests.
 * **Backend Authorization:** The `.NET Web API` validates the incoming Bearer token claims against **Azure Entra ID** to enforce granular Role-Based Access Control (RBAC).
 
----
+```mermaid
+graph TD
+    Client[Angular Frontend / Azure SWA] -->|HTTPS API Calls w/ MSAL Token| AppService[API: Azure App Services / Slots]
+```
 
-## 5. Component Communication & Dual-Facade Architecture
+---
+<!-- [Go to Installation](SETUP.md#installation-steps) -->
+
+## 6. Third-Party API Communication & Dual-Facade Architecture
 
 ```mermaid
 graph TD
-    Client[Angular Frontend / Azure SWA] -->|Direct HTTPS API Calls with MSAL Token| AppService[Web API: Azure App Services / Slots]
-    
-    subgraph Storage & Caching Layer
-        SQL[(Azure SQL Database: Test / Prod)]
-        Blob[(Azure Blob Storage: Test / Prod)]
-        Redis[(Shared Azure Cache for Redis)]
-        
-        Slot_Test[[Test Slot]] --> DB_Test
-        Slot_Test --> Blob_Test
-        Slot_Test -->|Logical Naming Prefix: test:*| Redis
-        
-        Slot_Stag[[Staging Slot]] --> DB_Prod
-        Slot_Stag --> Blob_Prod
-        Slot_Stag -->|Logical Naming Prefix: prod:* - Sticky| Redis
-        
-        Slot_Prod[[Production Slot]] --> DB_Prod
-        Slot_Prod --> Blob_Prod
-        Slot_Prod -->|Logical Naming Prefix: prod:*| Redis
-    end
-
     subgraph Test Gateway Facade
         Slot_Test[[Test Slot]] --> APIM_Test[APIM: Test]
         PM_Test[Postman: Test Suites] --> APIM_Test
@@ -128,14 +151,6 @@ graph TD
         APIM_Prod --> AzFunc_Prod[Azure Functions: Prod] --> Ext_Prod[3rd Party APIs: Prod]
     end
 ```
-
----
-
-## 6. Compute State & Schema Continuity
-
-* **Frontend Delivery:** Angular static web assets are directly published to their respective Azure SWA instances. No slot switches are performed on the CDN edge.
-* **Backend Zero-Downtime Swaps:** API code is published to the **Test Slot** and fully warmed up via the root runtime path, followed by sequential slot swaps to **Staging** and then to **Production** with zero traffic interruption.
-* **Database Drift Logic:** Employing an **Expand and Contract pattern**. Schema migrations are pushed *before* the slot swap occurs using backward-compatible, non-breaking mutations.
 
 ---
 
@@ -186,9 +201,72 @@ graph TD
 
 ---
 
-## 10. Q&A and Engineering Appendix
+## 10. Architectural Performance Gain
 
-* Open for peer review regarding schema management, token validation lifetimes, and caching boundaries.
+| Architecture Optimization | User/Developer Experience Reference | Baseline Range | Optimized Range | Performance Gain |
+| :--- | :--- | :--- | :--- | :--- |
+| **Tier 1 `.NET ResponseCache`** | Heavy Order/Loads Page | 10sec - 15sec | 2sec - 3sec | 5x Speedup |
+| **Tier 2 Azure for Redis Cache** | City Dropdown Typeahead (eg. Ch, Chi, Chic) | 1sec - 30sec | 110ms - 120ms (warm-up) & 48ms - 51ms (cached) | 9x Speedup |
+| **Tier 3 Hybrid Response/Blob** | Tracking Map Multi-City Route | 3sec - 5sec | 400ms - 500ms (warm-up) & 9ms - 10ms (cached) | 30x Speedup |
+| **Third-Party Integration** | Push Order & Load Updates on Save | 2sec - timeout | 0sec | Offloaded |
+| **Table Partitioning** | Audit Trail View | 30sec - timeout | 1sec - 3sec | 30x Speedup |
+| **Decoupled Multi-Environment** | Build & Publish UI to Test | 10min - 30min (periodic failure multiplier) | 1min - 2min | 10x Speedup (20x for one failure) |
+| **Decoupled Multi-Environment** | Build & Publish API to Test | 10min - 30min (periodic failure multiplier) | 2min - 3min | 5x Speedup (10x for one failure) |
+
+---
+
+## 11. Service Cost Line Items
+
+| Service | Change in Tier/Scale/Usage | Architectural Cost ($ / mo) |
+| :--- | :--- | ---: |
+| **Application Service** | Service Plan reduced: Premium v3 P2v3 to P1v3 | ($255) |
+| **Static Web App** | New Service Plan: Standard | $9 |
+| **Azure Functions Service** | New Service Plan: Premium v3 P0v3 | $127 |
+| **API Management Service** | New Service | $49 |
+| **SQL Azure - Prod** | Compute/Storage: **Capped** at 1600 DTU/750GB | $0 |
+| **SQL Azure - Test** | Compute/Storage: 1600 DTU/750GB to 400 DTU/250GB | ($1817) |
+| **Azure Cache for Redis** | New Service Plan: Balanced B1 | $51 |
+| **Azure Maps** | Reduced API calls | ($100) |
+| **Total** |  | ($1936) |
+
+---
+
+## 12. Financial Executive Summary
+
+| Financial Metric | Project Optimization Value |
+| :--- | ---: |
+| **Baseline Architectural Cost (4-month average)** | $7,476 / mo |
+| **Post-Implementation Cost (4-month average)** | $5,540 / mo |
+| **Cost Reductions Achieved (Monthly)** | $1,936 / mo |
+| **Empirical Percentage Reduction** | 25.9 % |
+| **Annualized Run-Rate Savings:** | $23,232 / yr |
+
+---
+
+## 13. Conclusion & Verification Plan
+
+### **User Experience:** Feedback was gathered for web application performance confirmation and data validity
+* Page load times ("it runs faster")
+* Less reported "need to reload the page" experience
+* Speed of dropdown typeaheads
+* Map routing speed
+* Audit log access speed and no longer avoiding that area
+* Third-party API call data validity and speed to save related data
+
+### **Monitoring:**
+* **Application Logs:** Reviewing logs continued as before
+* **Azure Metrics:** Charts were added to a `Cost Metrics` dashboard for tracking and verifying stability and costs
+    * **Daily Costs:** Stacked service costs per day
+    * **App Services (split Test/Prod):** CPU, memory, I/O, process, response time, and requests
+    * **Azure SQL Databases (split Test/Prod):** DTU, data space, I/O, and sessions
+    * **Redis Cache** CPU and memory
+    * **Azure Functions (split Test/Prod):** CPU and memory
+
+---
+
+## 14. Q&A and Engineering Appendix
+
+* Open for peer review regarding architectural topology, schema continuity, caching boundaries, and third-party API isolation.
 * **Deep dives available in repository:**
     * Appendix A: Architectual Trade-off Matrix
     * Appendix B: Slot Configuration Rules (Sticky vs. Swapped App Settings)

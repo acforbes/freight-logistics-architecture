@@ -106,7 +106,7 @@ graph TD
 Because the UI and API exist on decoupled domain endpoints, a strict CORS matrix is enforced in the API service:
 * **Preflight (OPTIONS) Resolution:** The App Service is configured to intercept and validate cross-origin preflight requests before execution.
 * **Domain Restrictions:** Whitelists are configured natively in the API on a per-domain basis for Test, Staging, and Production SWA domains. Wildcards (`*`) are strictly prohibited.
-* **Credentials Support:** `Access-Control-Allow-Credentials` is toggled on to allow bearer tokens orginating from MSAL.
+* **Credentials Support:** `Access-Control-Allow-Credentials` is toggled on to allow bearer tokens originating from MSAL.
 
 ---
 

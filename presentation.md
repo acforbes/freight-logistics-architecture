@@ -475,7 +475,7 @@ graph LR
 
 - Open for peer review regarding architectural topology, schema continuity, caching boundaries, and third-party API isolation.
 - **Deep dives available in repository:**
-    - [Appendix A: Architectural Trade-off Matrix](technical-spec.md)
-    - [Appendix B: Slot Configuration Rules (Sticky vs. Swapped App Settings)](technical-spec.md#appendix-b-slot-configuration-rules-sticky-vs-swapped-app-settings)
-    - [Appendix C: Detailed Cache Performance Rationale](technical-spec.md#appendix-c-detailed-cache-performance-rationale)
-    - [Appendix D: Isolated Testability Framework (APIM/Postman)](technical-spec.md#appendix-d-isolated-testability-framework-apim--postman)
+    - [Appendix A: Architectural Trade-off Matrix](https://github.com/acforbes/freight-logistics-architecture/blob/main/technical-spec.md)
+    - [Appendix B: Slot Configuration Rules (Sticky vs. Swapped App Settings)](https://github.com/acforbes/freight-logistics-architecture/blob/main/technical-spec.md#appendix-b-slot-configuration-rules-sticky-vs-swapped-app-settings)
+    - [Appendix C: Detailed Cache Performance Rationale](https://github.com/acforbes/freight-logistics-architecture/blob/main/technical-spec.md#appendix-c-detailed-cache-performance-rationale)
+    - [Appendix D: Isolated Testability Framework (APIM/Postman)](https://github.com/acforbes/freight-logistics-architecture/blob/main/technical-spec.md#appendix-d-isolated-testability-framework-apim--postman)

@@ -90,34 +90,34 @@ style: |
 
 ## 1a. System Overview & Non-Functional Requirements (NFRs)
 
-* **Business Context:** Mission-critical freight logistics web application for over 200 uesrs (carrier reps, sales, and trackers) and third-party logistics partners
-* **Hosting Model:** Fully managed, cloud-native Azure ecosystem
-* **Service Level Objectives (SLOs):**
-    * Critical North America 14-hour business hours uptime
-    * Immediate rollback response for release edge case scenarios
-    * Perceived page load times (eg. "Loading...") under 5 seconds with sub-second latency for component asynchronous requests
+- **Business Context:** Mission-critical freight logistics web application for over 200 uesrs (carrier reps, sales, and trackers) and third-party logistics partners
+- **Hosting Model:** Fully managed, cloud-native Azure ecosystem
+- **Service Level Objectives (SLOs):**
+    - Critical North America 14-hour business hours uptime
+    - Immediate rollback response for release edge case scenarios
+    - Perceived page load times (eg. "Loading...") under 5 seconds with sub-second latency for component asynchronous requests
 
 ---
 
 ## 1b. System Overview & Non-Functional Requirements (NFRs)
 
-* **Recovery Time Objective (RTO):** Maximum 30 minutes allowable downtime for restoring operations after a disruption or outage
-* **Capacity Allocation Constraints:** Acting as both Full Stack Software Engineer and Solution Architect
-    * **High Priority (90%)** Ongoing development release cycle and tier-2 support
-    * **Medium Priority (10%)** Architectural enhancements, technology upgrades (Angular and .Net), mitigating technical debt (eg. VB.Net repositories)
+- **Recovery Time Objective (RTO):** Maximum 30 minutes allowable downtime for restoring operations after a disruption or outage
+- **Capacity Allocation Constraints:** Acting as both Full Stack Software Engineer and Solution Architect
+    - **High Priority (90%)** Ongoing development release cycle and tier-2 support
+    - **Medium Priority (10%)** Architectural enhancements, technology upgrades (Angular and .Net), mitigating technical debt (eg. VB.Net repositories)
 
 ---
 
 ## 2. Legacy Architectural Pain Points
 
-* **High-Risk Promotions:** Had only a Test and Production environment. Slot swaps were executed *between* Test and Production directly, with no Staging layer for validation.
-* **Monolithic Complications:**
-    * **Combined UI and API Deployment Package:** Build/publish cycles took at least 10 minutes and would sometimes fail, causing additional development downtime.
-    * **3rd-party API Lag:** API calls were fired straight from the application runtime, stalling user interfaces when external systems lagged.
-* **Severe Memory & Database Pressure:**
-    * **No Caching Layer:** Typeaheads relied on a preloaded city-list object held entirely in API server memory. Bulky Order/Loads/Tracking pages had slow load times.
-    * **Storage Exhaustion:** Multi-city GPS coordinate paths sat inside a bloated database table. No partitioning on `AuditLogs` resulted in query timeouts.
-    * **No Storage Offloading:** No document management engine or file storage was utilized.
+- **High-Risk Promotions:** Had only a Test and Production environment. Slot swaps were executed *between* Test and Production directly, with no Staging layer for validation.
+- **Monolithic Complications:**
+    - **Combined UI and API Deployment Package:** Build/publish cycles took at least 10 minutes and would sometimes fail, causing additional development downtime.
+    - **3rd-party API Lag:** API calls were fired straight from the application runtime, stalling user interfaces when external systems lagged.
+- **Severe Memory & Database Pressure:**
+    - **No Caching Layer:** Typeaheads relied on a preloaded city-list object held entirely in API server memory. Bulky Order/Loads/Tracking pages had slow load times.
+    - **Storage Exhaustion:** Multi-city GPS coordinate paths sat inside a bloated database table. No partitioning on `AuditLogs` resulted in query timeouts.
+    - **No Storage Offloading:** No document management engine or file storage was utilized.
 
 ---
 
@@ -225,19 +225,19 @@ graph LR
 
 ## 5. Compute State & Schema Continuity
 
-* **Frontend Delivery:** Angular static web assets are directly published to their respective Azure SWA instances. No slot switches are performed on the CDN edge.
-* **Backend Zero-Downtime Swaps:** API code is published to the **Test Slot** and fully warmed up via the root runtime path, followed by sequential slot swaps to **Staging** and then to **Production** with zero traffic interruption.
-* **Database Drift Logic:** Employing an **Expand and Contract pattern**. Schema migrations are pushed *before* the slot swap occurs using backward-compatible, non-breaking mutations.
+- **Frontend Delivery:** Angular static web assets are directly published to their respective Azure SWA instances. No slot switches are performed on the CDN edge.
+- **Backend Zero-Downtime Swaps:** API code is published to the **Test Slot** and fully warmed up via the root runtime path, followed by sequential slot swaps to **Staging** and then to **Production** with zero traffic interruption.
+- **Database Drift Logic:** Employing an **Expand and Contract pattern**. Schema migrations are pushed *before* the slot swap occurs using backward-compatible, non-breaking mutations.
 
 ---
 
 ## 6a. Existing End-to-End Enterprise Identity & Security
 
-* **Frontend Authentication:** Angular integrates **MSAL (Microsoft Authentication Library)** to handle secure user authentication directly via Microsoft login.
-* **The Token Lifecycle:**
-    * MSAL acquires and automatically caches cryptographic JWT Access Tokens in the browser.
-    * An internal HTTP interceptor attaches the token to all direct backend API requests.
-* **Backend Authorization:** The `.NET Web API` validates the incoming Bearer token claims against **Azure Entra ID** to enforce granular Role-Based Access Control (RBAC).
+- **Frontend Authentication:** Angular integrates **MSAL (Microsoft Authentication Library)** to handle secure user authentication directly via Microsoft login.
+- **The Token Lifecycle:**
+    - MSAL acquires and automatically caches cryptographic JWT Access Tokens in the browser.
+    - An internal HTTP interceptor attaches the token to all direct backend API requests.
+- **Backend Authorization:** The `.NET Web API` validates the incoming Bearer token claims against **Azure Entra ID** to enforce granular Role-Based Access Control (RBAC).
 
 ---
 
@@ -325,14 +325,14 @@ graph TD
 
 To prevent unbounded data growth and optimize compute costs within Azure SQL, the database tuning strategy deploys two lifecycle architectures:
 
-* **Horizontal Table Partitioning:**
-    * High-volume `AuditLogs` are partitioned by **date ranges**.
-    * Query engines leverage **partition pruning** to completely bypass irrelevant data blocks.
-    * Result: Sub-second user access to historic compliance trails.
-* **Time-Bounded Log Retention:**
-    * System telemetry and API `UsageLogs` are capped on a rolling retention window.
-    * An automated background process continuously purges aged records.
-    * Result: Hard-caps database file size growth and flattens Azure storage expenses.
+- **Horizontal Table Partitioning:**
+    - High-volume `AuditLogs` are partitioned by **date ranges**.
+    - Query engines leverage **partition pruning** to completely bypass irrelevant data blocks.
+    - Result: Sub-second user access to historic compliance trails.
+- **Time-Bounded Log Retention:**
+    - System telemetry and API `UsageLogs` are capped on a rolling retention window.
+    - An automated background process continuously purges aged records.
+    - Result: Hard-caps database file size growth and flattens Azure storage expenses.
 
 ---
 
@@ -449,33 +449,33 @@ graph LR
 ## 14a. Conclusion, Verification Plan, and Observability Strategy
 
 **User Experience:** Feedback was gathered for web application performance confirmation and data validity
-* Page load times ("it runs faster")
-* Less reported "need to reload the page" experience
-* Speed of dropdown typeaheads
-* Map routing speed
-* Audit log access speed and no longer avoiding that area
-* Third-party API call data validity and speed to save related data
+- Page load times ("it runs faster")
+- Less reported "need to reload the page" experience
+- Speed of dropdown typeaheads
+- Map routing speed
+- Audit log access speed and no longer avoiding that area
+- Third-party API call data validity and speed to save related data
 
 ---
 
 ## 14b. Conclusion, Verification Plan, and Observability Strategy
 
 **Monitoring:**
-* **Application Logs:** Reviewing logs continued as before
-* **Azure Metrics:** Charts were added to a `Cost Metrics` dashboard for tracking and verifying stability and costs
-    * **Daily Costs:** Stacked service costs per day
-    * **App Services (split Test/Prod):** CPU, memory, I/O, process, response time, and requests
-    * **Azure SQL Databases (split Test/Prod):** DTU, data space, I/O, and sessions
-    * **Redis Cache** CPU and memory
-    * **Azure Functions (split Test/Prod):** CPU and memory
+- **Application Logs:** Reviewing logs continued as before
+- **Azure Metrics:** Charts were added to a `Cost Metrics` dashboard for tracking and verifying stability and costs
+    - **Daily Costs:** Stacked service costs per day
+    - **App Services (split Test/Prod):** CPU, memory, I/O, process, response time, and requests
+    - **Azure SQL Databases (split Test/Prod):** DTU, data space, I/O, and sessions
+    - **Redis Cache** CPU and memory
+    - **Azure Functions (split Test/Prod):** CPU and memory
 
 ---
 
 ## 15. Q&A and Engineering Appendix
 
-* Open for peer review regarding architectural topology, schema continuity, caching boundaries, and third-party API isolation.
-* **Deep dives available in repository:**
-    * [Appendix A: Architectual Trade-off Matrix](technical-spec.md)
-    * [Appendix B: Slot Configuration Rules (Sticky vs. Swapped App Settings)](technical-spec.md#appendix-b-slot-configuration-rules-sticky-vs-swapped-app-settings)
-    * [Appendix C: Detailed Cache Performance Rationale](technical-spec.md#appendix-c-detailed-cache-performance-rationale)
-    * [Appendix D: Isolated Testability Framework (APIM/Postman)](technical-spec.md#appendix-d-isolated-testability-framework-apim--postman)
+- Open for peer review regarding architectural topology, schema continuity, caching boundaries, and third-party API isolation.
+- **Deep dives available in repository:**
+    - [Appendix A: Architectual Trade-off Matrix](technical-spec.md)
+    - [Appendix B: Slot Configuration Rules (Sticky vs. Swapped App Settings)](technical-spec.md#appendix-b-slot-configuration-rules-sticky-vs-swapped-app-settings)
+    - [Appendix C: Detailed Cache Performance Rationale](technical-spec.md#appendix-c-detailed-cache-performance-rationale)
+    - [Appendix D: Isolated Testability Framework (APIM/Postman)](technical-spec.md#appendix-d-isolated-testability-framework-apim--postman)

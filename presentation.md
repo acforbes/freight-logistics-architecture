@@ -3,15 +3,15 @@ marp: true
 theme: gaia
 _class: lead
 paginate: true
-backgroundColor: #f4f6f9
-color: #2c3e50
+backgroundColor: #F9FAFB
+color: #334155
 style: |
   section {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 40px;
   }
-  h1 { color: #0078d4; }
-  h2 { color: #107c41; }
+  h1 { color: #0F172A; }
+  h2 { color: #0F172A; }
   footer { font-size: 0.5em; color: #555; }
   .columns {
     display: grid;
@@ -57,6 +57,17 @@ style: |
 ## 3. Legacy Topology
 
  ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E2E8F0',
+    'primaryTextColor': '#0F172A',
+    'primaryBorderColor': '#94A3B8',
+    'lineColor': '#475569',
+    'fontFamily': 'arial, helvetica, sans-serif',
+    'fontSize': '16px'
+  }
+}}%%
 graph LR
     subgraph Environment [App Service / Hosting Environment]
         subgraph Test [Test Slot]
@@ -85,6 +96,17 @@ graph LR
 ## 4. Decoupled Multi-Environment Topology
 
  ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E2E8F0',
+    'primaryTextColor': '#0F172A',
+    'primaryBorderColor': '#94A3B8',
+    'lineColor': '#475569',
+    'fontFamily': 'arial, helvetica, sans-serif',
+    'fontSize': '16px'
+  }
+}}%%
 graph TD
     subgraph Frontend Layer [Direct CDN Publishing]
         SWA_Test[Angular Test SWA]
@@ -133,6 +155,17 @@ graph TD
 
 ```mermaid
 graph TD
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E2E8F0',
+    'primaryTextColor': '#0F172A',
+    'primaryBorderColor': '#94A3B8',
+    'lineColor': '#475569',
+    'fontFamily': 'arial, helvetica, sans-serif',
+    'fontSize': '16px'
+  }
+}}%%
     Client[Angular Frontend / Azure SWA] -->|HTTPS API Calls w/ MSAL Token| AppService[API: Azure App Services / Slots]
 ```
 
@@ -141,6 +174,17 @@ graph TD
 ## 6. Third-Party API Communication & Dual-Facade Architecture
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E2E8F0',
+    'primaryTextColor': '#0F172A',
+    'primaryBorderColor': '#94A3B8',
+    'lineColor': '#475569',
+    'fontFamily': 'arial, helvetica, sans-serif',
+    'fontSize': '16px'
+  }
+}}%%
 graph TD
     subgraph Test Gateway Facade
         Slot_Test[[Test Slot]] --> APIM_Test[APIM: Test]
@@ -191,6 +235,17 @@ To aggressively maximize performance, caching layers are partitioned by data cha
 When a user requests multi-city route GPS coordinates, the Web API processes the request through a strict **3-tier failover lifecycle**:
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E2E8F0',
+    'primaryTextColor': '#0F172A',
+    'primaryBorderColor': '#94A3B8',
+    'lineColor': '#475569',
+    'fontFamily': 'arial, helvetica, sans-serif',
+    'fontSize': '16px'
+  }
+}}%%
 graph TD
     Req[Incoming Route Request] --> T1{.NET ResponseCache}
     T1 -->|Hit: Valid < 24 Hours| Return[Return JSON Payload]

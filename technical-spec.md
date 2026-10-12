@@ -16,11 +16,11 @@ This reference guide justifies the technical architecture selected for the Freig
 
 To prevent severe configuration leaking between Test, Staging, and Production environments during a manual publish and subsequent swaps, variables are divided strictly via Azure **Slot Settings**:
 
-### 🔄 Settings that SWAP with the Code:
+### Settings that SWAP with the Code:
 * **API Log Levels** (e.g., Verbose in Staging, Warning in Production).
 * **Feature Flags** (New logistics modules currently hidden in production but active in staging).
 
-### 📌 Settings that remain STICKY to the Slot (Never Swap):
+### Settings that remain STICKY to the Slot (Never Swap):
 * **Database Connection Strings** (`AzureSQL_Prod` vs. `AzureSQL_Test`).
 * **Azure Cache for Redis** keys and environment connection/prefix configuration (`prod:` vs `test:`).
 * **Azure Entra ID Client Secrets** and registered application scopes.

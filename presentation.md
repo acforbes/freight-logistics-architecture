@@ -78,6 +78,11 @@ style: |
 ---
 
 # Freight Logistics Architecture
+
+[View Presentation (Google Slides)](https://docs.google.com/presentation/d/1kNZ3qS8HAFMV5cAThZ2DTC5mIsrtjFAQ/edit?usp=sharing&ouid=103726539775453085274&rtpof=true&sd=true)
+
+---
+
 ## Systems Modernization & Architectural Optimization
 ### **Presenter:** Adrian Forbes (Team Lead, Full Stack Engineering) | Solution Architect Senior
 

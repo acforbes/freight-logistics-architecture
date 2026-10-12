@@ -2,6 +2,8 @@
 
 An enterprise cloud-native architecture for a mission-critical freight logistics web platform. This system decouples static client interface from stateful API layers, utilizes a strict 4-tier caching model to minimize database load, secures external using MSAL with Microsoft login, and leverages serverless microservices behind an API Management facade secured by Azure Entra ID.
 
+[View Presentation (Google Slides)](https://docs.google.com/presentation/d/1kNZ3qS8HAFMV5cAThZ2DTC5mIsrtjFAQ/edit?usp=sharing&ouid=103726539775453085274&rtpof=true&sd=true)
+
 ## Architectural Pillars
 
 * **Zero-Downtime Infrastructure:** Blue/Green style code promotions via Azure App Service Deployment Slots.

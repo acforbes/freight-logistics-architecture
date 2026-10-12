@@ -1,4 +1,6 @@
 social-preview/
 
-presentation.html
-presentation.pdf
+*.html
+*.pdf
+*.pptx
+presentation-diagrams.md

@@ -120,7 +120,7 @@ style: |
 
  ```mermaid
 %%{init: {
-  'theme': 'base',
+  'theme': '',
   'themeVariables': {
     'fontFamily': 'Arial, sans-serif',
     'fontSize': '15px',
@@ -133,27 +133,28 @@ style: |
   }
 }}%%
 graph LR
-    subgraph Environment [App Service / Hosting Environment]
-        subgraph Test [Test Slot]
-            A[Monolith UI / API]
-        end
+    style Environment fill:#F5FAFF,stroke:#D0E6FF,color:#003366;
+    style Data fill:#F3FCF9,stroke:#D1F2EB,color:#0E6251;
 
-        subgraph Prod [Production Slot]
-            B[Monolith UI / API]
-        end
+    classDef app fill:#E9D8FD,stroke:#5C2D91,color:#2D1650;  %% Light Azure purple
+    classDef sql fill:#E0F3FF,stroke:#0078D4,color:#003366;  %% SQL light blue
+
+    subgraph Environment [App Service / Hosting Environment]
+        Test[Test Slot<br/>Monolith<br/>UI / API]:::app
+        Prod[Prod Slot<br/>Monolith<br/>UI / API]:::app
         
         %% Swap Action
-        A <--> |Deployment Swap| B
+        Test <--> |Deployment Swap| Prod
     end
 
     subgraph Data [Data Tier]
-        DB_Test[(Azure SQL: Test)]
-        DB_Prod[(Azure SQL: Prod)]
+        DB_Test[(Azure SQL<br/>Test)]:::sql
+        DB_Prod[(Azure SQL<br/>Prod)]:::sql
     end
 
     %% Database Connections
-    A ---> DB_Test
-    B ---> DB_Prod
+    Test ---> DB_Test
+    Prod ---> DB_Prod
 ```
 ---
 
@@ -161,7 +162,7 @@ graph LR
 
  ```mermaid
 %%{init: {
-  'theme': 'base',
+  'theme': '',
   'themeVariables': {
     'fontFamily': 'Arial, sans-serif',
     'fontSize': '15px',
@@ -173,31 +174,45 @@ graph LR
     'tertiaryColor': '#ffffff'
   }
 }}%%
-graph TD
-    subgraph Frontend Layer [Direct CDN Publishing]
-        SWA_Test[Angular Test SWA]
-        SWA_Stag[Angular Staging SWA]
-        SWA_Prod[Angular Prod SWA]
-    end
+graph LR
+    style Container fill:#F5FAFF,stroke:#D0E6FF,color:#003366;
+    style Frontend fill:#F5FAFF,stroke:#D0E6FF,color:#003366;
+    style Backend fill:#F9F5FF,stroke:#E3D8FF,color:#2D1650;
+    style DataStorage fill:#F3FCF9,stroke:#D1F2EB,color:#0E6251;
 
-    subgraph Backend App Service Plan [Sequential Swap Chain]
-        SWA_Test -->|Direct UI-to-API| Slot_Test[[Test Slot]]
-        SWA_Stag -->|Direct UI-to-API| Slot_Stag[[Staging Slot]]
-        SWA_Prod -->|Direct UI-to-API| Slot_Prod[[Production Slot]]
-        
-        Slot_Test <-->|1. PROMOTION SWAP| Slot_Stag
-        Slot_Stag <-->|2. DEPLOYMENT SWAP| Slot_Prod
-    end
+    classDef swa fill:#CFE8FF,stroke:#0078D4,color:#003366;  %% Light Azure blue
+    classDef app fill:#E9D8FD,stroke:#5C2D91,color:#2D1650;  %% Light Azure purple
+    classDef sql fill:#E0F3FF,stroke:#0078D4,color:#003366;  %% SQL light blue
+    classDef blob fill:#FFF8D6,stroke:#C19A00,color:#5A4A00; %% Light Blob yellow
 
-    subgraph Data & Storage Isolation Tier
-        Slot_Test --> DB_Test[(Azure SQL: Test)]
-        Slot_Test --> Blob_Test[(Blob Storage: Test Container)]
-        
-        Slot_Stag -->|Sticky Setting| DB_Prod_Main[(Azure SQL: Prod)]
-        Slot_Prod -->|Sticky Setting| DB_Prod_Main
-        
-        Slot_Stag -->|Sticky Setting| Blob_Prod[(Blob Storage: Prod Container)]
-        Slot_Prod -->|Sticky Setting| Blob_Prod
+    subgraph Container[ ]
+      direction LR
+
+      subgraph Frontend [Angular CDN<br/>Publishing]
+          SWA_Test[Test<br/>SWA]:::swa
+          SWA_Stag[Staging<br/>SWA]:::swa
+          SWA_Prod[Prod<br/>SWA]:::swa
+      end
+
+      subgraph Backend [.Net API Swap Chain]
+          SWA_Test -->|UI→API| Slot_Test[[Test<br/>Slot]]:::app
+          SWA_Stag -->|UI→API| Slot_Stag[[Staging<br/>Slot]]:::app
+          SWA_Prod -->|UI→API| Slot_Prod[[Prod<br/>Slot]]:::app
+          
+          Slot_Test <-->|Promote| Slot_Stag
+          Slot_Stag <-->|Deploy| Slot_Prod
+      end
+
+      subgraph DataStorage [Data &<br/>Storage<br/>Tier]
+          Slot_Test --> DB_Test[(Azure<br/>SQL<br/>Test)]:::sql
+          Slot_Test --> Blob_Test[(Blob<br/>Storage<br/>Test)]:::blob
+          
+          Slot_Stag -->|Sticky<br/>Setting| DB_Prod_Main[(Azure<br/>SQL<br/>Prod)]:::sql
+          Slot_Prod -->|Sticky<br/>Setting| DB_Prod_Main:::sql
+          
+          Slot_Stag -->|Sticky<br/>Setting| Blob_Prod[(Blob<br/>Storage<br/>Prod)]:::blob
+          Slot_Prod -->|Sticky<br/>Setting| Blob_Prod:::blob
+      end
     end
 ```
 
@@ -224,9 +239,8 @@ graph TD
 ## 6b. Existing End-to-End Enterprise Identity & Security
 
 ```mermaid
-graph TD
 %%{init: {
-  'theme': 'base',
+  'theme': '',
   'themeVariables': {
     'fontFamily': 'Arial, sans-serif',
     'fontSize': '15px',
@@ -238,7 +252,19 @@ graph TD
     'tertiaryColor': '#ffffff'
   }
 }}%%
-    Client[Angular Frontend / Azure SWA] -->|HTTPS API Calls w/ MSAL Token| AppService[API: Azure App Services / Slots]
+graph LR
+    style Container fill:#F5FAFF,stroke:#D0E6FF,color:#003366;
+    style Frontend fill:#F5FAFF,stroke:#D0E6FF,color:#003366;
+    style Backend fill:#F9F5FF,stroke:#E3D8FF,color:#2D1650;
+
+    classDef swa fill:#CFE8FF,stroke:#0078D4,color:#003366;  %% Light Azure blue
+    classDef app fill:#E9D8FD,stroke:#5C2D91,color:#2D1650;  %% Light Azure purple
+
+    subgraph Container[ ]
+      direction LR
+
+      Frontend[Angular Frontend/<br/>Azure SWA]:::swa -->|HTTPS API<br/>Calls w/ MSAL Token| Backend[API: Azure App<br/>Services / Slots]:::app
+    end
 ```
 
 ---
@@ -247,7 +273,7 @@ graph TD
 
 ```mermaid
 %%{init: {
-  'theme': 'base',
+  'theme': '',
   'themeVariables': {
     'fontFamily': 'Arial, sans-serif',
     'fontSize': '15px',
@@ -260,17 +286,31 @@ graph TD
   }
 }}%%
 graph TD
-    subgraph Test Gateway Facade
-        Slot_Test[[Test Slot]] --> APIM_Test[APIM: Test]
-        PM_Test[Postman: Test Suites] --> APIM_Test
-        APIM_Test --> AzFunc_Test[Azure Functions: Test] --> Ext_Test[3rd Party APIs: Test]
-    end
+    style Container fill:#F5FAFF,stroke:#D0E6FF,color:#003366;
+    style Test fill:#F5FAFF,stroke:#D0E6FF,color:#003366;
+    style Prod fill:#F9F5FF,stroke:#E3D8FF,color:#2D1650;
 
-    subgraph Production Gateway Facade
-        Slot_Stag[[Staging Slot]] -->|Sticky Connection| APIM_Prod[APIM: Prod]
-        Slot_Prod[[Production Slot]] --> APIM_Prod
-        PM_Prod[Postman: Live Checks] --> APIM_Prod
-        APIM_Prod --> AzFunc_Prod[Azure Functions: Prod] --> Ext_Prod[3rd Party APIs: Prod]
+    classDef postman fill:#FFE5D0,stroke:#FF6C37,color:#7A2E1F;
+    classDef app fill:#E9D8FD,stroke:#5C2D91,color:#2D1650;
+    classDef apim fill:#D9F2FF,stroke:#00A3E0,color:#004766;
+    classDef func fill:#FFF4CC,stroke:#F2C200,color:#5A4A00;
+    classDef thirdparty fill:#E8ECF1,stroke:#8A9BA8,color:#2E3A45;
+
+    subgraph Container[ ]
+      direction TD
+
+      subgraph Test[Test Gateway Facade]
+          Slot_Test[[Test Slot]]:::app --> APIM_Test[APIM: Test]:::apim
+          PM_Test[Postman: Test Suites]:::postman --> APIM_Test
+          APIM_Test --> AzFunc_Test[Azure Functions: Test]:::func --> Ext_Test[3rd Party APIs: Test]:::thirdparty
+      end
+
+      subgraph Prod[Production Gateway Facade]
+          Slot_Stag[[Staging Slot]]:::app -->|Sticky Connection| APIM_Prod[APIM: Prod]:::apim
+          Slot_Prod[[Production Slot]]:::app --> APIM_Prod
+          PM_Prod[Postman: Live Checks]:::postman --> APIM_Prod
+          APIM_Prod --> AzFunc_Prod[Azure Functions: Prod]:::func --> Ext_Prod[3rd Party APIs: Prod]:::thirdparty
+      end
     end
 ```
 
@@ -310,7 +350,7 @@ When a user requests multi-city route GPS coordinates, the Web API processes the
 
 ```mermaid
 %%{init: {
-  'theme': 'base',
+  'theme': '',
   'themeVariables': {
     'fontFamily': 'Arial, sans-serif',
     'fontSize': '15px',
@@ -322,16 +362,28 @@ When a user requests multi-city route GPS coordinates, the Web API processes the
     'tertiaryColor': '#ffffff'
   }
 }}%%
-graph TD
-    Req[Incoming Route Request] --> T1{.NET ResponseCache}
-    T1 -->|Hit: Valid < 24 Hours| Return[Return JSON Payload]
-    
-    T1 -->|Miss / Expired| T2{Azure Blob Storage}
-    T2 -->|Hit: File Found| Warm[.NET Re-caches + Return]
-    
-    T2 -->|Miss: File Not Found| T3[Azure Maps API Compute]
-    T3 --> Save[Write JSON to Blob Storage]
-    Save --> Warm
+graph LR
+    style Container fill:#F5FAFF,stroke:#D0E6FF,color:#003366;
+
+    classDef swa fill:#CFE8FF,stroke:#0078D4,color:#003366;  %% Light Azure blue
+    classDef app fill:#E9D8FD,stroke:#5C2D91,color:#2D1650;  %% Light Azure purple
+    classDef blob fill:#FFF8D6,stroke:#C19A00,color:#5A4A00; %% Light Blob yellow
+    classDef json fill:#FFE5D0,stroke:#FF6C37,color:#7A2E1F;
+    classDef maps fill:#E8ECF1,stroke:#8A9BA8,color:#2E3A45;
+
+    subgraph Container[ ]
+      direction LR
+
+      Req[Incoming Route Request]:::swa --> T1{.NET ResponseCache}:::app
+      T1 -->|Hit: Valid < 24 Hours| Return[Return JSON Payload]:::json
+      
+      T1 -->|Miss / Expired| T2{Azure Blob Storage}:::blob
+      T2 -->|Hit: File Found| Warm[.NET Re-caches + Return]:::app
+      
+      T2 -->|Miss: File Not Found| T3[Azure Maps API Compute]:::maps
+      T3 --> Save[Write JSON to Blob Storage]:::blob
+      Save --> Warm
+    end
 ```
 
 ---

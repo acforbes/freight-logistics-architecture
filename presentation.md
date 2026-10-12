@@ -28,7 +28,7 @@ style: |
 
 ## 1. System Overview & Non-Functional Requirements (NFRs)
 
-* **Business Context:** Mission-critical freight logistics web application for carrier reps, carrier sales, carrier trackers, and third-party logistics partners
+* **Business Context:** Mission-critical freight logistics web application for over 200 uesrs (carrier reps, sales, and trackers) and third-party logistics partners
 * **Hosting Model:** Fully managed, cloud-native Azure ecosystem
 * **Service Level Objectives (SLOs):**
     * Critical North America 14-hour business hours uptime
@@ -214,8 +214,8 @@ graph TD
 | **Tier 3 Hybrid Response/Blob** | Tracking Map Multi-City Route | 3sec - 5sec | 400ms - 500ms (warm-up) & 9ms - 10ms (cached) | 30x Speedup |
 | **Third-Party Integration** | Push Order & Load Updates on Save | 2sec - timeout | 0sec | Offloaded |
 | **Table Partitioning** | Audit Trail View | 30sec - timeout | 1sec - 3sec | 30x Speedup |
-| **Decoupled Multi-Environment** | Build & Publish UI to Test | 10min - 30min (periodic failure multiplier) | 1min - 2min | 10x Speedup (20x for one failure) |
-| **Decoupled Multi-Environment** | Build & Publish API to Test | 10min - 30min (periodic failure multiplier) | 2min - 3min | 5x Speedup (10x for one failure) |
+| **Decoupled Multi-Environment (UI)** | Build & Publish UI to Test | 10min - 30min (periodic failure) | 1min - 2min | 10x Speedup (20x for one failure) |
+| **Decoupled Multi-Environment (API)** | Build & Publish API to Test | 10min - 30min (periodic failure) | 2min - 3min | 5x Speedup (10x for one failure) |
 
 ---
 
@@ -245,7 +245,7 @@ graph TD
 | **Empirical Percentage Reduction** | 25.9 % |
 | **Annualized Run-Rate Savings:** | $23,232 / yr |
 
-### **Legacy Cost Projection:** Prior to optimization, the baseline architecture cost grew from $5,400 to $7,000 over the previous 9 months. Left unchecked, the monthly cost projection was estimated to cross $9,000 within the next 12 months.
+### **Legacy Cost Projection:** Prior to optimization, the baseline architecture cost grew from $5,400 to $7,500 over the previous 9 months. Left unchecked, the monthly cost projection was estimated to cross $8,000 within the next 12 months.
 
 ### **Future Cost Projection:** All services remain at a steady non-growth level. The Azure SQL production database sits at 177gb capacity with 750gb allocated. Growth allowance is at least two years with minimal change in cost.
 

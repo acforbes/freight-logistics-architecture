@@ -22,7 +22,7 @@ To fully understand the current architecture, this section outlines the technica
 
 | Architectural Vector | Legacy Topology ("Before") | Modernized Architecture ("After") | Engineering & Service Tier Impact |
 | :--- | :--- | :--- | :--- |
-| **Release Confidence** | Direct Slot Swap from Test ➔ Prod. Zero safety staging buffer. | **Isolated Test bed** + **Staging-to-Prod Slot Swap** lifecycle. | Code is smoke-tested against live environment prior to production deployment. |
+| **Release Confidence** | Direct Slot Swap from Test ➔ Prod. Zero safety staging buffer. | **Isolated Test bed** + **Staging-to-Prod Slot Swap** lifecycle. | Code is smoke-tested by power users against live environment prior to production deployment. |
 | **UI/API Lifecycle** | Monolithic combined UI/API deployment package. | **Decoupled:** Direct CDN SWA publishing + isolated API App Service. | UI deployments bypass backend restarts. |
 | **Perimeter Traffic** | Shared domain space (Zero CORS overhead required). | Cross-Origin limited via API App Service policies. | Employs explicit browser-level preflight headers and origin restrictions (`Allow-Credentials`). |
 | **Integration Boundary** | 3rd-party APIs invoked straight from Web API, causing UI stalls. | **APIM Facade** + Serverless **Azure Functions** proxy layer. | Fragile external dependencies are sandboxed; eliminating impact from failures or API lag. |

@@ -90,7 +90,7 @@ style: |
 
 ## 1a. System Overview & Non-Functional Requirements (NFRs)
 
-- **Business Context:** Mission-critical freight logistics web application for over 200 uesrs (carrier reps, sales, and trackers) and third-party logistics partners
+- **Business Context:** Mission-critical freight logistics web application for over 200 users (carrier reps, sales, and trackers) and third-party logistics partners
 - **Hosting Model:** Fully managed, cloud-native Azure ecosystem
 - **Service Level Objectives (SLOs):**
     - Critical North America 14-hour business hours uptime

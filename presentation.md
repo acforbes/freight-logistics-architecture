@@ -28,11 +28,16 @@ style: |
 
 ## 1. System Overview & Core Requirements
 
-* **Domain:** Mission-critical freight logistics web application.
-    * Decoupled frontend static asset delivery from stateful compute layers.
-    * Zero-downtime backend execution via warm App Service deployment slots.
-    * Isolated microservice gateway via APIM for third-party integrations and testing.
-* **Hosting Model:** Fully managed, cloud-native Azure ecosystem.
+* **Domain:** Mission-critical freight logistics web application
+* **Hosting Model:** Fully managed, cloud-native Azure ecosystem
+* **Service Level Objectives (SLOs):**
+    * Critical North America 14-hour business hours uptime
+    * Immediate rollback response for release edge case scenarios
+    * Perceived page load times (eg. "Loading...") under 5 seconds with sub-second latency for component asynchronous requests
+* **Recovery Time Objective (RTO):** Maximum 30 minutes allowable downtime for restoring operations after a disruption or outage
+* **Capacity Allocation Constraints:** Acting as both Full Stack Software Engineer and Solution Architect
+    * **High Priority (90%)** Ongoing development release cycle and tier-2 support
+    * **Medium Priority (10%)** Architectural enhancements, technology upgrades (Angular and .Net), mitigating technical debt (eg. VB.Net repositories)
 
 ---
 
@@ -132,7 +137,6 @@ graph TD
 ```
 
 ---
-<!-- [Go to Installation](SETUP.md#installation-steps) -->
 
 ## 6. Third-Party API Communication & Dual-Facade Architecture
 
@@ -241,6 +245,10 @@ graph TD
 | **Empirical Percentage Reduction** | 25.9 % |
 | **Annualized Run-Rate Savings:** | $23,232 / yr |
 
+### **Legacy Cost Projection:** Prior to optimization, the baseline architecture cost grew from $5,400 to $7,000 over the previous 9 months. Left unchecked, the monthly cost projection was estimated to cross $9,000 within the next 12 months.
+
+### **Future Cost Projection:** All services remain at a steady non-growth level. The Azure SQL production database sits at 177gb capacity with 750gb allocated. Growth allowance is at least two years with minimal change in cost.
+
 ---
 
 ## 13. Conclusion & Verification Plan
@@ -268,9 +276,9 @@ graph TD
 
 * Open for peer review regarding architectural topology, schema continuity, caching boundaries, and third-party API isolation.
 * **Deep dives available in repository:**
-    * Appendix A: Architectual Trade-off Matrix
-    * Appendix B: Slot Configuration Rules (Sticky vs. Swapped App Settings)
-    * Appendix C: Detailed Cache Performance Rationale
-    * Appendix D: Isolated Testability Framework (APIM & Postman)
+    * [Appendix A: Architectual Trade-off Matrix](technical-spec.md)
+    * [Appendix B: Slot Configuration Rules (Sticky vs. Swapped App Settings)](technical-spec.md#appendix-b-slot-configuration-rules-sticky-vs-swapped-app-settings)
+    * [Appendix C: Detailed Cache Performance Rationale](technical-spec.md#appendix-c-detailed-cache-performance-rationale)
+    * [Appendix D: Isolated Testability Framework (APIM/Postman)](technical-spec.md#appendix-d-isolated-testability-framework-apim--postman)
 
 ---

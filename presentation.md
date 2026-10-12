@@ -26,9 +26,9 @@ style: |
 
 ---
 
-## 1. System Overview & Core Requirements
+## 1. System Overview & Non-Functional Requirements (NFRs)
 
-* **Domain:** Mission-critical freight logistics web application
+* **Business Context:** Mission-critical freight logistics web application for carrier reps, carrier sales, carrier trackers, and third-party logistics partners
 * **Hosting Model:** Fully managed, cloud-native Azure ecosystem
 * **Service Level Objectives (SLOs):**
     * Critical North America 14-hour business hours uptime
@@ -251,7 +251,7 @@ graph TD
 
 ---
 
-## 13. Conclusion & Verification Plan
+## 13. Conclusion, Verification Plan, and Observability Strategy
 
 ### **User Experience:** Feedback was gathered for web application performance confirmation and data validity
 * Page load times ("it runs faster")

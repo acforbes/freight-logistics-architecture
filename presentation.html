@@ -601,7 +601,7 @@ img {
 </li>
 <li><strong>Severe Memory &amp; Database Pressure:</strong>
 <ul>
-<li><strong>No Caching Layer:</strong> Typeaheads relied on a preloaded city-list object held entirely in API server memory. Bulky Order/Loads/Tracking pages had slow load times.</li>
+<li><strong>No Caching Layer:</strong> Typeaheads relied on a preloaded city-list object held entirely in API server memory and high network/database utilization for customer and carrier dropdowns. Bulky Order/Loads/Tracking pages had slow load times.</li>
 <li><strong>Storage Exhaustion:</strong> Multi-city GPS coordinate paths sat inside a bloated database table. No partitioning on <code>AuditLogs</code> resulted in query timeouts.</li>
 <li><strong>No Storage Offloading:</strong> No document management engine or file storage was utilized.</li>
 </ul>
@@ -1462,7 +1462,7 @@ img {
 }
 ;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
 <h2 id="7-third-party-api-communication--dual-facade-architecture">7. Third-Party API Communication &amp; Dual-Facade Architecture</h2>
-<p><img src="./diagrams/presentation-third-party-api.png" alt="" style="width:1100px;" /></p>
+<p><img src="./diagrams/presentation-third-party-api.png" alt="" style="width:1150px;" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-background-color="#ffffff" data-color="#334155" data-theme="gaia" data-style="section {
   padding: 40px;
@@ -2097,7 +2097,7 @@ img {
 </tr>
 <tr>
 <td style="text-align:left"><strong>Redis Cache</strong></td>
-<td style="text-align:left">City Typeahead (e.g. Ch, Chi, Chic)</td>
+<td style="text-align:left">City/Customer/Carrier Typeahead (eg. Ch, Chi, Chic)</td>
 <td style="text-align:left">1-30sec</td>
 <td style="text-align:left">110-120ms (w/u) &amp; 48-51ms (cached)</td>
 <td style="text-align:center">9x</td>
@@ -2435,7 +2435,7 @@ img {
 <tr>
 <th style="text-align:left">Service</th>
 <th style="text-align:left">Change in Tier/Scale/Usage</th>
-<th style="text-align:right">Cost ($/mo)</th>
+<th style="text-align:right">Delta ($/mo)</th>
 </tr>
 </thead>
 <tbody>
@@ -2451,13 +2451,13 @@ img {
 </tr>
 <tr>
 <td style="text-align:left"><strong>Azure Functions</strong></td>
-<td style="text-align:left">New Service Plan: Premium v3 P0v3</td>
-<td style="text-align:right">$127</td>
+<td style="text-align:left">Existing Service Plan: Premium v3 P0v3</td>
+<td style="text-align:right">$0</td>
 </tr>
 <tr>
 <td style="text-align:left"><strong>API Management</strong></td>
-<td style="text-align:left">New Service</td>
-<td style="text-align:right">$49</td>
+<td style="text-align:left">Existing Service</td>
+<td style="text-align:right">$0</td>
 </tr>
 <tr>
 <td style="text-align:left"><strong>SQL Azure - Prod</strong></td>
@@ -2482,7 +2482,7 @@ img {
 <tr>
 <td style="text-align:left"><strong>Total</strong></td>
 <td style="text-align:left"></td>
-<td style="text-align:right">($1936)</td>
+<td style="text-align:right">($2,112)</td>
 </tr>
 </tbody>
 </table>
@@ -2639,19 +2639,19 @@ img {
 </tr>
 <tr>
 <td style="text-align:left"><strong>Post-Implementation Cost (4-month average)</strong></td>
-<td style="text-align:right">$5,540 / mo</td>
+<td style="text-align:right">$5,364 / mo</td>
 </tr>
 <tr>
 <td style="text-align:left"><strong>Cost Reductions Achieved (Monthly)</strong></td>
-<td style="text-align:right">$1,936 / mo</td>
+<td style="text-align:right">$2,112 / mo</td>
 </tr>
 <tr>
 <td style="text-align:left"><strong>Empirical Percentage Reduction</strong></td>
-<td style="text-align:right">25.9 %</td>
+<td style="text-align:right">28.2 %</td>
 </tr>
 <tr>
 <td style="text-align:left"><strong>Annualized Run-Rate Savings:</strong></td>
-<td style="text-align:right">$23,232 / yr</td>
+<td style="text-align:right">$25,344 / yr</td>
 </tr>
 </tbody>
 </table>

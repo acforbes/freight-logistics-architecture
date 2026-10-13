@@ -28,7 +28,7 @@ To fully understand the current architecture, this section outlines the technica
 | **UI/API Lifecycle** | Monolithic combined UI/API deployment package. | **Decoupled:** Direct CDN SWA publishing + isolated API App Service. | UI deployments bypass backend restarts. |
 | **Perimeter Traffic** | Shared domain space (Zero CORS overhead required). | Cross-Origin limited via API App Service policies. | Employs explicit browser-level preflight headers and origin restrictions (`Allow-Credentials`). |
 | **Integration Boundary** | 3rd-party APIs invoked straight from Web API, causing UI stalls. | **APIM Facade** + Serverless **Azure Functions** proxy layer. | Fragile external dependencies are sandboxed; eliminating impact from failures or API lag. |
-| **Search Performance** | Massive, resource-heavy city list preloaded in API memory. | Dedicated **Azure Cache for Redis** index using `env:typeahead:*` pattern. | Reduced Web API RAM footprint while providing fast autocompletion. |
+| **Search Performance** | Massive, resource-heavy city list preloaded in API memory. High I/O Customer and Carrier dropdowns. | Dedicated **Azure Cache for Redis** index using `env:typeahead:*` pattern. | Reduced Web API RAM footprint, network bandwidth, and database process load while providing fast autocompletion. |
 | **Route Performance** | Heavy SQL table tracking multi-city GPS routes. | **3-Tier Fallback Loop:** `.NET ResponseCache` ➔ **Azure Blob Storage JSON** ➔ Azure Maps. | Shrinks database size; reduces Azure Maps expenses by caching static data. |
 | **Database Resiliency** | No data partitioning or archival rules; queries on `AuditLogs` timed out. | **Date-Range Partitioning** (monthly) + rolling 90-day log retention. | Query engines use **partition pruning** for fast audit lookups; greatly reduces database size growth. |
 | **Test Database Scale** | Test database environment a direct image and service level copy of Production with log tables truncation | Implemented database copy SOP to include shrinking database, lowering compute DTUs, and reducing total database size | Greatly reduced cost overhead for test database |
@@ -68,7 +68,9 @@ graph TD
         PM_Test[Postman Client: Test Suites] -->|Direct Request Validation| APIM_Test
         APIM_Test <-->|Claims Validation| Entra_Test[Azure Entra ID: Test]
         APIM_Test -->|Serverless Trigger| AzFunc_Test[Azure Functions: Test]
+        User_Test[Client: Power Automate Test] --> APIM_Test
         AzFunc_Test -->|Simulated Data Loop| External_Test[3rd Party Carrier APIs: Test Endpoints]
+        AzFunc_Test --> DB_Test[(Azure<br/>SQL<br/>Test)]
     end
 
     subgraph Production Microservice Facade [Live Integration Perimeter]
@@ -77,7 +79,9 @@ graph TD
         PM_Prod[Postman Client: Live Sanity Verifications] -->|Direct Request Validation| APIM_Prod
         APIM_Prod <-->|Claims Validation| Entra_Prod[Azure Entra ID: Production]
         APIM_Prod -->|Serverless Trigger| AzFunc_Prod[Azure Functions: Production]
+        User_Prod[Client: Power Automate Prod] --> APIM_Prod
         AzFunc_Prod -->|Live Logistics Telemetry| External_Prod[3rd Party Carrier APIs: Production Core]
+        AzFunc_Prod --> DB_Prod[(Azure<br/>SQL<br/>Prod)]
     end
 ```
 
@@ -167,8 +171,8 @@ The system enforces a **4-tier caching strategy** optimized around data longevit
 ## Third-Party API Facade Security & Testability
 
 ### Azure API Management (APIM) Positioning
-APIM is restricted to serving as a third-party integration wall. 
-* **Ingress Restriction:** Only authenticated requests from the primary Web API, organizational group entities, or testing infrastructure can cross the gateway boundary.
+APIM is restricted to serving as a third-party integration wall.
+* **Ingress Restriction:** Only authenticated requests from the primary Web API, organizational group entities (`Power Automate`), or testing infrastructure can cross the gateway boundary.
 * **Token Hardening:** Entra ID issues strict Role-Based Access Control (RBAC) claims. APIM cryptographically validates these JWT signatures at the edge to shelter downstream Azure Functions from bad requests.
 
 ### Isolated Testing Engine (Postman)

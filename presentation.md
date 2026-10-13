@@ -115,7 +115,7 @@ style: |
     - **Combined UI and API Deployment Package:** Build/publish cycles took at least 10 minutes and would sometimes fail, causing additional development downtime.
     - **3rd-party API Lag:** API calls were fired straight from the application runtime, stalling user interfaces when external systems lagged.
 - **Severe Memory & Database Pressure:**
-    - **No Caching Layer:** Typeaheads relied on a preloaded city-list object held entirely in API server memory. Bulky Order/Loads/Tracking pages had slow load times.
+    - **No Caching Layer:** Typeaheads relied on a preloaded city-list object held entirely in API server memory and high network/database utilization for customer and carrier dropdowns. Bulky Order/Loads/Tracking pages had slow load times.
     - **Storage Exhaustion:** Multi-city GPS coordinate paths sat inside a bloated database table. No partitioning on `AuditLogs` resulted in query timeouts.
     - **No Storage Offloading:** No document management engine or file storage was utilized.
 
@@ -296,8 +296,10 @@ graph TD
     style Prod fill:#F9F5FF,stroke:#E3D8FF,color:#2D1650;
 
     classDef postman fill:#FFE5D0,stroke:#FF6C37,color:#7A2E1F;
+    classDef pwr fill:#D9ECFF,stroke:#0085E6,color:#003A73;
     classDef app fill:#E9D8FD,stroke:#5C2D91,color:#2D1650;
-    classDef apim fill:#D9F2FF,stroke:#00A3E0,color:#004766;
+    classDef apim fill:#FFD9D9,stroke:#E00000,color:#760000;
+    classDef sql fill:#E0F3FF,stroke:#0078D4,color:#003366;
     classDef func fill:#FFF4CC,stroke:#F2C200,color:#5A4A00;
     classDef thirdparty fill:#E8ECF1,stroke:#8A9BA8,color:#2E3A45;
 
@@ -305,16 +307,22 @@ graph TD
       direction TD
 
       subgraph Test[Test Gateway Facade]
+          direction TD
           Slot_Test[[Test Slot]]:::app --> APIM_Test[APIM: Test]:::apim
           PM_Test[Postman: Test Suites]:::postman --> APIM_Test
+          User_Test[Client: Power Automate Test]:::pwr --> APIM_Test
           APIM_Test --> AzFunc_Test[Azure Functions: Test]:::func --> Ext_Test[3rd Party APIs: Test]:::thirdparty
+          AzFunc_Test --> DB_Test[(Azure<br/>SQL<br/>Test)]:::sql
       end
 
       subgraph Prod[Production Gateway Facade]
+          direction TD
           Slot_Stag[[Staging Slot]]:::app -->|Sticky Connection| APIM_Prod[APIM: Prod]:::apim
           Slot_Prod[[Production Slot]]:::app --> APIM_Prod
           PM_Prod[Postman: Live Checks]:::postman --> APIM_Prod
+          User_Prod[Client: Power Automate Prod]:::pwr --> APIM_Prod
           APIM_Prod --> AzFunc_Prod[Azure Functions: Prod]:::func --> Ext_Prod[3rd Party APIs: Prod]:::thirdparty
+          AzFunc_Prod --> DB_Prod[(Azure<br/>SQL<br/>Prod)]:::sql
       end
     end
 ```
@@ -398,7 +406,7 @@ graph LR
 | Architecture Optimization | User/Developer Experience | Baseline Range | Optimized Range | Performance Gain |
 | :--- | :--- | :--- | :--- | :---: |
 | **`.NET ResponseCache`** | Heavy Order/Loads Page | 10-15sec | 2-3sec | 5x |
-| **Redis Cache** | City Typeahead (eg. Ch, Chi, Chic) | 1-30sec | 110-120ms (w/u) & 48-51ms (cached) | 9x |
+| **Redis Cache** | City/Customer/Carrier Typeahead (eg. Ch, Chi, Chic) | 1-30sec | 110-120ms (w/u) & 48-51ms (cached) | 9x |
 | **Hybrid Response/Blob** | Multi-City Route | 3-5sec | 400-500ms (w/u) & 9-10ms (cached) | 30x |
 | **Third-Party Integration** | Push Order & Load Updates on Save | 2sec - timeout | 0sec | 100% |
 
@@ -416,17 +424,17 @@ graph LR
 
 ## 12. Service Cost Line Items
 
-| Service | Change in Tier/Scale/Usage | Cost ($/mo) |
+| Service | Change in Tier/Scale/Usage | Delta ($/mo) |
 | :--- | :--- | ---: |
 | **Application Service** | Service Plan reduced: Premium v3 P2v3 to P1v3 | ($255) |
 | **Static Web App** | New Service Plan: Standard | $9 |
-| **Azure Functions** | New Service Plan: Premium v3 P0v3 | $127 |
-| **API Management** | New Service | $49 |
+| **Azure Functions** | Existing Service Plan: Premium v3 P0v3 | $0 |
+| **API Management** | Existing Service | $0 |
 | **SQL Azure - Prod** | Compute/Storage: **Capped** at 1600 DTU/750GB | $0 |
-| **SQL Azure - Test** | Compute/Storage: 1600 DTU/750GB to 400 DTU/250GB | ($1817) |
+| **SQL Azure - Test** | Compute/Storage: 1600 DTU/750GB to 400 DTU/250GB | ($1,817) |
 | **Azure Cache for Redis** | New Service Plan: Balanced B1 | $51 |
 | **Azure Maps** | Reduced API calls | ($100) |
-| **Total** |  | ($1936) |
+| **Total** |  | ($2,112) |
 
 ---
 
@@ -435,10 +443,10 @@ graph LR
 | Financial Metric | Project Optimization Value |
 | :--- | ---: |
 | **Baseline Architectural Cost (4-month average)** | $7,476 / mo |
-| **Post-Implementation Cost (4-month average)** | $5,540 / mo |
-| **Cost Reductions Achieved (Monthly)** | $1,936 / mo |
-| **Empirical Percentage Reduction** | 25.9 % |
-| **Annualized Run-Rate Savings:** | $23,232 / yr |
+| **Post-Implementation Cost (4-month average)** | $5,364 / mo |
+| **Cost Reductions Achieved (Monthly)** | $2,112 / mo |
+| **Empirical Percentage Reduction** | 28.2 % |
+| **Annualized Run-Rate Savings:** | $25,344 / yr |
 
 **Legacy Cost Projection:** Prior to optimization, the baseline architecture cost grew from $5,400 to $7,500 over the previous 9 months. Left unchecked, the monthly cost projection was estimated to cross $8,000 within the next 12 months.
 

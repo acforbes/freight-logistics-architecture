@@ -150,7 +150,7 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
 <h1 id="freight-logistics-architecture">Freight Logistics Architecture</h1>
 <h2 id="systems-modernization--architectural-optimization">Systems Modernization &amp; Architectural Optimization</h2>
 <h3 id="presenter-adrian-forbes-team-lead-full-stack-engineering--solution-architect-senior"><strong>Presenter:</strong> Adrian Forbes (Team Lead, Full Stack Engineering) | Solution Architect Senior</h3>
@@ -291,7 +291,7 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
 <h2 id="1a-system-overview--non-functional-requirements-nfrs">1a. System Overview &amp; Non-Functional Requirements (NFRs)</h2>
 <ul>
 <li><strong>Business Context:</strong> Mission-critical freight logistics web application for over 200 users (carrier reps, sales, and trackers) and third-party logistics partners</li>
@@ -441,7 +441,7 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
 <h2 id="1b-system-overview--non-functional-requirements-nfrs">1b. System Overview &amp; Non-Functional Requirements (NFRs)</h2>
 <ul>
 <li><strong>Recovery Time Objective (RTO):</strong> Maximum 30 minutes allowable downtime for restoring operations after a disruption or outage</li>
@@ -589,7 +589,7 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
 <h2 id="2-legacy-architectural-pain-points">2. Legacy Architectural Pain Points</h2>
 <ul>
 <li><strong>High-Risk Promotions:</strong> Had only a Test and Production environment. Slot swaps were executed <em>between</em> Test and Production directly, with no Staging layer for validation.</li>
@@ -744,7 +744,7 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
 <h2 id="3-legacy-topology">3. Legacy Topology</h2>
 <p><img src="./diagrams/presentation-legacy-topology.png" alt="" style="width:1200px;" /></p>
 </section>
@@ -884,7 +884,7 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
 <h2 id="4-decoupled-multi-environment-topology">4. Decoupled Multi-Environment Topology</h2>
 <p><img src="./diagrams/presentation-topology.png" alt="" style="width:1200px;" /></p>
 </section>
@@ -1024,7 +1024,7 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
 <h2 id="5-compute-state--schema-continuity">5. Compute State &amp; Schema Continuity</h2>
 <ul>
 <li><strong>Frontend Delivery:</strong> Angular static web assets are directly published to their respective Azure SWA instances. No slot switches are performed on the CDN edge.</li>
@@ -1168,8 +1168,8 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
-<h2 id="6a-existing-end-to-end-enterprise-identity--security">6a. Existing End-to-End Enterprise Identity &amp; Security</h2>
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
+<h2 id="6-existing-end-to-end-enterprise-identity--security">6. Existing End-to-End Enterprise Identity &amp; Security</h2>
 <ul>
 <li><strong>Frontend Authentication:</strong> Angular integrates <strong>MSAL (Microsoft Authentication Library)</strong> to handle secure user authentication directly via Microsoft login.</li>
 <li><strong>The Token Lifecycle:</strong>
@@ -1180,6 +1180,7 @@ img {
 </li>
 <li><strong>Backend Authorization:</strong> The <code>.NET Web API</code> validates the incoming Bearer token claims against <strong>Azure Entra ID</strong> to enforce granular Role-Based Access Control (RBAC).</li>
 </ul>
+<p><img src="./diagrams/presentation-existing-security.png" alt="" style="width:1150px;" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-background-color="#ffffff" data-color="#334155" data-theme="gaia" data-style="section {
   padding: 40px;
@@ -1317,12 +1318,9 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
-<h2 id="6b-existing-end-to-end-enterprise-identity--security">6b. Existing End-to-End Enterprise Identity &amp; Security</h2>
-<br />
-<br />
-<br />
-<p><img src="./diagrams/presentation-existing-security.png" alt="" style="width:1200px;" /></p>
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
+<h2 id="7-third-party-api-communication--dual-facade-architecture">7. Third-Party API Communication &amp; Dual-Facade Architecture</h2>
+<p><img src="./diagrams/presentation-third-party-api.png" alt="" style="width:1150px;" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-background-color="#ffffff" data-color="#334155" data-theme="gaia" data-style="section {
   padding: 40px;
@@ -1460,9 +1458,25 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
-<h2 id="7-third-party-api-communication--dual-facade-architecture">7. Third-Party API Communication &amp; Dual-Facade Architecture</h2>
-<p><img src="./diagrams/presentation-third-party-api.png" alt="" style="width:1150px;" /></p>
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
+<h2 id="8-database-tuning--cloud-cost-controls">8. Database Tuning &amp; Cloud Cost Controls</h2>
+<p>To prevent unbounded data growth and optimize compute costs within Azure SQL, the database tuning strategy deploys two lifecycle architectures:</p>
+<ul>
+<li><strong>Horizontal Table Partitioning:</strong>
+<ul>
+<li>High-volume <code>AuditLogs</code> are partitioned by <strong>date ranges</strong>.</li>
+<li>Query engines leverage <strong>partition pruning</strong> to completely bypass irrelevant data blocks.</li>
+<li>Result: Sub-second user access to historic compliance trails.</li>
+</ul>
+</li>
+<li><strong>Time-Bounded Log Retention:</strong>
+<ul>
+<li>System telemetry and API <code>UsageLogs</code> are capped on a rolling retention window.</li>
+<li>An automated background process continuously purges aged records.</li>
+<li>Result: Hard-caps database file size growth and flattens Azure storage expenses.</li>
+</ul>
+</li>
+</ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-background-color="#ffffff" data-color="#334155" data-theme="gaia" data-style="section {
   padding: 40px;
@@ -1600,25 +1614,45 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
-<h2 id="8-database-tuning--cloud-cost-controls">8. Database Tuning &amp; Cloud Cost Controls</h2>
-<p>To prevent unbounded data growth and optimize compute costs within Azure SQL, the database tuning strategy deploys two lifecycle architectures:</p>
-<ul>
-<li><strong>Horizontal Table Partitioning:</strong>
-<ul>
-<li>High-volume <code>AuditLogs</code> are partitioned by <strong>date ranges</strong>.</li>
-<li>Query engines leverage <strong>partition pruning</strong> to completely bypass irrelevant data blocks.</li>
-<li>Result: Sub-second user access to historic compliance trails.</li>
-</ul>
-</li>
-<li><strong>Time-Bounded Log Retention:</strong>
-<ul>
-<li>System telemetry and API <code>UsageLogs</code> are capped on a rolling retention window.</li>
-<li>An automated background process continuously purges aged records.</li>
-<li>Result: Hard-caps database file size growth and flattens Azure storage expenses.</li>
-</ul>
-</li>
-</ul>
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
+<h2 id="9-comprehensive-4-tier-caching-topology">9. Comprehensive 4-Tier Caching Topology</h2>
+<p>To aggressively maximize performance, caching layers are partitioned by data change frequency:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Tier</th>
+<th style="text-align:left">Caching Engine</th>
+<th style="text-align:left">Targeted Data Payload</th>
+<th style="text-align:left">Lifespan / Isolation Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>1</strong></td>
+<td style="text-align:left"><code>.NET ResponseCache</code></td>
+<td style="text-align:left">Long-term Static Lookups</td>
+<td style="text-align:left">Completely local in-memory; zero network hops.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>2</strong></td>
+<td style="text-align:left"><code>Azure Cache for Redis</code></td>
+<td style="text-align:left">High-frequency Typeahead Search</td>
+<td style="text-align:left">Prefixed key spaces (<code>prod:typeahead:*</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>3</strong></td>
+<td style="text-align:left">Hybrid Response/Blob</td>
+<td style="text-align:left">Multi-City Route GPS Data</td>
+<td style="text-align:left">24-Hour cache fallback to JSON objects or Azure Maps.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>4</strong></td>
+<td style="text-align:left">Azure Blob Storage</td>
+<td style="text-align:left">Historical Document Archive</td>
+<td style="text-align:left">Persisted behind authenticated API proxies.</td>
+</tr>
+</tbody>
+</table>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-background-color="#ffffff" data-color="#334155" data-theme="gaia" data-style="section {
   padding: 40px;
@@ -1756,45 +1790,12 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
-<h2 id="9-comprehensive-4-tier-caching-topology">9. Comprehensive 4-Tier Caching Topology</h2>
-<p>To aggressively maximize performance, caching layers are partitioned by data change frequency:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Tier</th>
-<th style="text-align:left">Caching Engine</th>
-<th style="text-align:left">Targeted Data Payload</th>
-<th style="text-align:left">Lifespan / Isolation Strategy</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><strong>1</strong></td>
-<td style="text-align:left"><code>.NET ResponseCache</code></td>
-<td style="text-align:left">Long-term Static Lookups</td>
-<td style="text-align:left">Completely local in-memory; zero network hops.</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>2</strong></td>
-<td style="text-align:left"><code>Azure Cache for Redis</code></td>
-<td style="text-align:left">High-frequency Typeahead Search</td>
-<td style="text-align:left">Prefixed key spaces (<code>prod:typeahead:*</code>).</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>3</strong></td>
-<td style="text-align:left">Hybrid Response/Blob</td>
-<td style="text-align:left">Multi-City Route GPS Data</td>
-<td style="text-align:left">24-Hour cache fallback to JSON objects.</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>4</strong></td>
-<td style="text-align:left">Azure Blob Storage</td>
-<td style="text-align:left">Historical Document Archive</td>
-<td style="text-align:left">Persisted behind authenticated API proxies.</td>
-</tr>
-</tbody>
-</table>
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
+<h2 id="10-tiered-route-resolution-pipeline">10. Tiered Route Resolution Pipeline</h2>
+<p>When a user requests multi-city route GPS coordinates, the Web API processes the request through a strict <strong>3-tier failover lifecycle</strong>:</p>
+<br />
+<br />
+<p><img src="./diagrams/presentation-tiered-route.png" alt="" style="width:1200px;" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-background-color="#ffffff" data-color="#334155" data-theme="gaia" data-style="section {
   padding: 40px;
@@ -1932,12 +1933,49 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
-<h2 id="10-tiered-route-resolution-pipeline">10. Tiered Route Resolution Pipeline</h2>
-<p>When a user requests multi-city route GPS coordinates, the Web API processes the request through a strict <strong>3-tier failover lifecycle</strong>:</p>
-<br />
-<br />
-<p><img src="./diagrams/presentation-tiered-route.png" alt="" style="width:1200px;" /></p>
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
+<h2 id="11a-architectural-performance-gain">11a. Architectural Performance Gain</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Architecture Optimization</th>
+<th style="text-align:left">User/Developer Experience</th>
+<th style="text-align:left">Baseline Range</th>
+<th style="text-align:left">Optimized Range</th>
+<th style="text-align:center">Performance Gain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong><code>.NET ResponseCache</code></strong></td>
+<td style="text-align:left">Heavy Order/Loads Page</td>
+<td style="text-align:left">10-15sec</td>
+<td style="text-align:left">2-3sec</td>
+<td style="text-align:center">5x</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Redis Cache</strong></td>
+<td style="text-align:left">City/Customer/Carrier Typeahead (eg. Ch, Chi, Chic)</td>
+<td style="text-align:left">1-30sec</td>
+<td style="text-align:left">110-120ms (w/u) &amp; 48-51ms (cached)</td>
+<td style="text-align:center">9x</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Hybrid Response/Blob</strong></td>
+<td style="text-align:left">Multi-City Route</td>
+<td style="text-align:left">3-5sec</td>
+<td style="text-align:left">400-500ms (w/u) &amp; 9-10ms (cached)</td>
+<td style="text-align:center">30x</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Third-Party Integration</strong></td>
+<td style="text-align:left">Push Order &amp; Load Updates on Save</td>
+<td style="text-align:left">2sec - timeout</td>
+<td style="text-align:left">0sec</td>
+<td style="text-align:center">100%</td>
+</tr>
+</tbody>
+</table>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-background-color="#ffffff" data-color="#334155" data-theme="gaia" data-style="section {
   padding: 40px;
@@ -2075,8 +2113,8 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
-<h2 id="11a-architectural-performance-gain">11a. Architectural Performance Gain</h2>
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
+<h2 id="11b-architectural-performance-gain">11b. Architectural Performance Gain</h2>
 <table>
 <thead>
 <tr>
@@ -2084,37 +2122,30 @@ img {
 <th style="text-align:left">User/Developer Experience</th>
 <th style="text-align:left">Baseline Range</th>
 <th style="text-align:left">Optimized Range</th>
-<th style="text-align:center">Performance Gain</th>
+<th style="text-align:left">Performance Gain</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><strong><code>.NET ResponseCache</code></strong></td>
-<td style="text-align:left">Heavy Order/Loads Page</td>
-<td style="text-align:left">10-15sec</td>
-<td style="text-align:left">2-3sec</td>
-<td style="text-align:center">5x</td>
+<td style="text-align:left"><strong>Table Partitioning</strong></td>
+<td style="text-align:left">Audit Trail View</td>
+<td style="text-align:left">30sec - timeout</td>
+<td style="text-align:left">1-3sec</td>
+<td style="text-align:left">30x</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Redis Cache</strong></td>
-<td style="text-align:left">City/Customer/Carrier Typeahead (eg. Ch, Chi, Chic)</td>
-<td style="text-align:left">1-30sec</td>
-<td style="text-align:left">110-120ms (w/u) &amp; 48-51ms (cached)</td>
-<td style="text-align:center">9x</td>
+<td style="text-align:left"><strong>Decoupled Multi-Environment (UI)</strong></td>
+<td style="text-align:left">Build &amp; Publish UI to Test</td>
+<td style="text-align:left">10-30min (periodic failure)</td>
+<td style="text-align:left">1-2min</td>
+<td style="text-align:left">10x (20x for one failure)</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Hybrid Response/Blob</strong></td>
-<td style="text-align:left">Multi-City Route</td>
-<td style="text-align:left">3-5sec</td>
-<td style="text-align:left">400-500ms (w/u) &amp; 9-10ms (cached)</td>
-<td style="text-align:center">30x</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Third-Party Integration</strong></td>
-<td style="text-align:left">Push Order &amp; Load Updates on Save</td>
-<td style="text-align:left">2sec - timeout</td>
-<td style="text-align:left">0sec</td>
-<td style="text-align:center">100%</td>
+<td style="text-align:left"><strong>Decoupled Multi-Environment (API)</strong></td>
+<td style="text-align:left">Build &amp; Publish API to Test</td>
+<td style="text-align:left">10-30min (periodic failure)</td>
+<td style="text-align:left">2-3min</td>
+<td style="text-align:left">5x (10x for one failure)</td>
 </tr>
 </tbody>
 </table>
@@ -2255,39 +2286,61 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
-<h2 id="11b-architectural-performance-gain">11b. Architectural Performance Gain</h2>
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
+<h2 id="12-service-cost-line-items">12. Service Cost Line Items</h2>
 <table>
 <thead>
 <tr>
-<th style="text-align:left">Architecture Optimization</th>
-<th style="text-align:left">User/Developer Experience</th>
-<th style="text-align:left">Baseline Range</th>
-<th style="text-align:left">Optimized Range</th>
-<th style="text-align:left">Performance Gain</th>
+<th style="text-align:left">Service</th>
+<th style="text-align:left">Change in Tier/Scale/Usage</th>
+<th style="text-align:right">Delta ($/mo)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><strong>Table Partitioning</strong></td>
-<td style="text-align:left">Audit Trail View</td>
-<td style="text-align:left">30sec - timeout</td>
-<td style="text-align:left">1-3sec</td>
-<td style="text-align:left">30x</td>
+<td style="text-align:left"><strong>Application Service</strong></td>
+<td style="text-align:left">Service Plan reduced: Premium v3 P2v3 to P1v3</td>
+<td style="text-align:right">($255)</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Decoupled Multi-Environment (UI)</strong></td>
-<td style="text-align:left">Build &amp; Publish UI to Test</td>
-<td style="text-align:left">10-30min (periodic failure)</td>
-<td style="text-align:left">1-2min</td>
-<td style="text-align:left">10x (20x for one failure)</td>
+<td style="text-align:left"><strong>Static Web App</strong></td>
+<td style="text-align:left">New Service Plan: Standard</td>
+<td style="text-align:right">$9</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Decoupled Multi-Environment (API)</strong></td>
-<td style="text-align:left">Build &amp; Publish API to Test</td>
-<td style="text-align:left">10-30min (periodic failure)</td>
-<td style="text-align:left">2-3min</td>
-<td style="text-align:left">5x (10x for one failure)</td>
+<td style="text-align:left"><strong>Azure Functions</strong></td>
+<td style="text-align:left">Existing Service Plan: Premium v3 P0v3</td>
+<td style="text-align:right">$0</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>API Management</strong></td>
+<td style="text-align:left">Existing Service</td>
+<td style="text-align:right">$0</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>SQL Azure - Prod</strong></td>
+<td style="text-align:left">Compute/Storage: <strong>Capped</strong> at 1600 DTU/750GB</td>
+<td style="text-align:right">$0</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>SQL Azure - Test</strong></td>
+<td style="text-align:left">Compute/Storage: 1600 DTU/750GB to 400 DTU/250GB</td>
+<td style="text-align:right">($1817)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Azure Cache for Redis</strong></td>
+<td style="text-align:left">New Service Plan: Balanced B1</td>
+<td style="text-align:right">$51</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Azure Maps</strong></td>
+<td style="text-align:left">Reduced API calls</td>
+<td style="text-align:right">($100)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Total</strong></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">($2,112)</td>
 </tr>
 </tbody>
 </table>
@@ -2428,64 +2481,40 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
-<h2 id="12-service-cost-line-items">12. Service Cost Line Items</h2>
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
+<h2 id="13-financial-executive-summary">13. Financial Executive Summary</h2>
 <table>
 <thead>
 <tr>
-<th style="text-align:left">Service</th>
-<th style="text-align:left">Change in Tier/Scale/Usage</th>
-<th style="text-align:right">Delta ($/mo)</th>
+<th style="text-align:left">Financial Metric</th>
+<th style="text-align:right">Project Optimization Value</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><strong>Application Service</strong></td>
-<td style="text-align:left">Service Plan reduced: Premium v3 P2v3 to P1v3</td>
-<td style="text-align:right">($255)</td>
+<td style="text-align:left"><strong>Baseline Architectural Cost (4-month average)</strong></td>
+<td style="text-align:right">$7,476 / mo</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Static Web App</strong></td>
-<td style="text-align:left">New Service Plan: Standard</td>
-<td style="text-align:right">$9</td>
+<td style="text-align:left"><strong>Post-Implementation Cost (4-month average)</strong></td>
+<td style="text-align:right">$5,364 / mo</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>Azure Functions</strong></td>
-<td style="text-align:left">Existing Service Plan: Premium v3 P0v3</td>
-<td style="text-align:right">$0</td>
+<td style="text-align:left"><strong>Cost Reductions Achieved (Monthly)</strong></td>
+<td style="text-align:right">$2,112 / mo</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>API Management</strong></td>
-<td style="text-align:left">Existing Service</td>
-<td style="text-align:right">$0</td>
+<td style="text-align:left"><strong>Empirical Percentage Reduction</strong></td>
+<td style="text-align:right">28.2 %</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>SQL Azure - Prod</strong></td>
-<td style="text-align:left">Compute/Storage: <strong>Capped</strong> at 1600 DTU/750GB</td>
-<td style="text-align:right">$0</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>SQL Azure - Test</strong></td>
-<td style="text-align:left">Compute/Storage: 1600 DTU/750GB to 400 DTU/250GB</td>
-<td style="text-align:right">($1817)</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Azure Cache for Redis</strong></td>
-<td style="text-align:left">New Service Plan: Balanced B1</td>
-<td style="text-align:right">$51</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Azure Maps</strong></td>
-<td style="text-align:left">Reduced API calls</td>
-<td style="text-align:right">($100)</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Total</strong></td>
-<td style="text-align:left"></td>
-<td style="text-align:right">($2,112)</td>
+<td style="text-align:left"><strong>Annualized Run-Rate Savings:</strong></td>
+<td style="text-align:right">$25,344 / yr</td>
 </tr>
 </tbody>
 </table>
+<p><strong>Legacy Cost Projection:</strong> Prior to optimization, the baseline architecture cost grew from $5,400 to $7,500 over the previous 9 months. Left unchecked, the monthly cost projection was estimated to cross $8,000 within the next 12 months.</p>
+<p><strong>Future Cost Projection:</strong> All services remain at a steady non-growth level. The Azure SQL production database sits at 177gb capacity with 750gb allocated. Growth allowance is at least two years with minimal change in cost.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-background-color="#ffffff" data-color="#334155" data-theme="gaia" data-style="section {
   padding: 40px;
@@ -2623,40 +2652,17 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
-<h2 id="13-financial-executive-summary">13. Financial Executive Summary</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Financial Metric</th>
-<th style="text-align:right">Project Optimization Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><strong>Baseline Architectural Cost (4-month average)</strong></td>
-<td style="text-align:right">$7,476 / mo</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Post-Implementation Cost (4-month average)</strong></td>
-<td style="text-align:right">$5,364 / mo</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Cost Reductions Achieved (Monthly)</strong></td>
-<td style="text-align:right">$2,112 / mo</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Empirical Percentage Reduction</strong></td>
-<td style="text-align:right">28.2 %</td>
-</tr>
-<tr>
-<td style="text-align:left"><strong>Annualized Run-Rate Savings:</strong></td>
-<td style="text-align:right">$25,344 / yr</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Legacy Cost Projection:</strong> Prior to optimization, the baseline architecture cost grew from $5,400 to $7,500 over the previous 9 months. Left unchecked, the monthly cost projection was estimated to cross $8,000 within the next 12 months.</p>
-<p><strong>Future Cost Projection:</strong> All services remain at a steady non-growth level. The Azure SQL production database sits at 177gb capacity with 750gb allocated. Growth allowance is at least two years with minimal change in cost.</p>
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
+<h2 id="14a-conclusion-verification-plan-and-observability-strategy">14a. Conclusion, Verification Plan, and Observability Strategy</h2>
+<p><strong>User Experience:</strong> Feedback was gathered for web application performance confirmation and data validity</p>
+<ul>
+<li>Page load times (&quot;it runs faster&quot;)</li>
+<li>Less reported &quot;need to reload the page&quot; experience</li>
+<li>Speed of dropdown typeaheads</li>
+<li>Map routing speed</li>
+<li>Audit log access speed and no longer avoiding that area</li>
+<li>Third-party API call data validity and speed to save related data</li>
+</ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-background-color="#ffffff" data-color="#334155" data-theme="gaia" data-style="section {
   padding: 40px;
@@ -2794,16 +2800,20 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
-<h2 id="14a-conclusion-verification-plan-and-observability-strategy">14a. Conclusion, Verification Plan, and Observability Strategy</h2>
-<p><strong>User Experience:</strong> Feedback was gathered for web application performance confirmation and data validity</p>
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
+<h2 id="14b-conclusion-verification-plan-and-observability-strategy">14b. Conclusion, Verification Plan, and Observability Strategy</h2>
+<p><strong>Monitoring:</strong></p>
 <ul>
-<li>Page load times (&quot;it runs faster&quot;)</li>
-<li>Less reported &quot;need to reload the page&quot; experience</li>
-<li>Speed of dropdown typeaheads</li>
-<li>Map routing speed</li>
-<li>Audit log access speed and no longer avoiding that area</li>
-<li>Third-party API call data validity and speed to save related data</li>
+<li><strong>Application Logs:</strong> Reviewing logs continued as before</li>
+<li><strong>Azure Metrics:</strong> Charts were added to a <code>Cost Metrics</code> dashboard for tracking and verifying stability and costs
+<ul>
+<li><strong>Daily Costs:</strong> Stacked service costs per day</li>
+<li><strong>App Services (split Test/Prod):</strong> CPU, memory, I/O, process, response time, and requests</li>
+<li><strong>Azure SQL Databases (split Test/Prod):</strong> DTU, data space, I/O, and sessions</li>
+<li><strong>Redis Cache</strong> CPU and memory</li>
+<li><strong>Azure Functions (split Test/Prod):</strong> CPU and memory</li>
+</ul>
+</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-background-color="#ffffff" data-color="#334155" data-theme="gaia" data-style="section {
@@ -2942,159 +2952,7 @@ code {
 img {
   background-color: transparent !important;
 }
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
-<h2 id="14b-conclusion-verification-plan-and-observability-strategy">14b. Conclusion, Verification Plan, and Observability Strategy</h2>
-<p><strong>Monitoring:</strong></p>
-<ul>
-<li><strong>Application Logs:</strong> Reviewing logs continued as before</li>
-<li><strong>Azure Metrics:</strong> Charts were added to a <code>Cost Metrics</code> dashboard for tracking and verifying stability and costs
-<ul>
-<li><strong>Daily Costs:</strong> Stacked service costs per day</li>
-<li><strong>App Services (split Test/Prod):</strong> CPU, memory, I/O, process, response time, and requests</li>
-<li><strong>Azure SQL Databases (split Test/Prod):</strong> DTU, data space, I/O, and sessions</li>
-<li><strong>Redis Cache</strong> CPU and memory</li>
-<li><strong>Azure Functions (split Test/Prod):</strong> CPU and memory</li>
-</ul>
-</li>
-</ul>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-background-color="#ffffff" data-color="#334155" data-theme="gaia" data-style="section {
-  padding: 40px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-}
-h1, h2, h3 {
-  color: #0f172a;
-  font-weight: 700;
-}
-h1 {
-  font-size: 1.4em;
-}
-h2 {
-  font-size: 1.2em;
-}
-h3 {
-  font-size: 1.0em;
-}
-h4 {
-  font-size: 0.9em;
-}
-p {
-  font-size: 0.8em;
-}
-ul, ol {
-  font-size: 0.75em; 
-}
-ul ul, ul ol, ol ul, ol ol {
-  font-size: 100%;
-}
-table {
-  margin-left: auto;
-  margin-right: auto;
-  width: 95%;
-  border-collapse: collapse;
-  font-size: 0.75em;
-  margin-top: 20px;
-}
-th {
-  background-color: #f8fafc;
-  color: #0f172a;
-  border-bottom: 3px solid #cbd5e1;
-  padding: 12px 16px;
-  font-weight: 700;
-  text-align: left;
-}
-/* Style data cells */
-td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e2e8f0;
-  color: #334155;
-  vertical-align: top;
-}
-/* Zebra striping for easy reading across columns */
-tr:nth-child(even) {
-  background-color: #f9fafb;
-}
-footer {
-  font-size: 0.5em;
-  color: #94a3b8;
-}
-code {
-  background-color: #f1f5f9;
-  color: #0f172a;
-}
-/* Fixes Marp's default image sizing behavior for slides */
-img {
-  background-color: transparent !important;
-}
-" lang="en-US" data-marpit-pagination="20" style="--paginate:true;--background-color:#ffffff;--color:#334155;--theme:gaia;--style:section {
-  padding: 40px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-}
-h1, h2, h3 {
-  color: #0f172a;
-  font-weight: 700;
-}
-h1 {
-  font-size: 1.4em;
-}
-h2 {
-  font-size: 1.2em;
-}
-h3 {
-  font-size: 1.0em;
-}
-h4 {
-  font-size: 0.9em;
-}
-p {
-  font-size: 0.8em;
-}
-ul, ol {
-  font-size: 0.75em; 
-}
-ul ul, ul ol, ol ul, ol ol {
-  font-size: 100%;
-}
-table {
-  margin-left: auto;
-  margin-right: auto;
-  width: 95%;
-  border-collapse: collapse;
-  font-size: 0.75em;
-  margin-top: 20px;
-}
-th {
-  background-color: #f8fafc;
-  color: #0f172a;
-  border-bottom: 3px solid #cbd5e1;
-  padding: 12px 16px;
-  font-weight: 700;
-  text-align: left;
-}
-/* Style data cells */
-td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e2e8f0;
-  color: #334155;
-  vertical-align: top;
-}
-/* Zebra striping for easy reading across columns */
-tr:nth-child(even) {
-  background-color: #f9fafb;
-}
-footer {
-  font-size: 0.5em;
-  color: #94a3b8;
-}
-code {
-  background-color: #f1f5f9;
-  color: #0f172a;
-}
-/* Fixes Marp's default image sizing behavior for slides */
-img {
-  background-color: transparent !important;
-}
-;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="20" data-size="16:9">
+;color:#334155;background-color:#ffffff;background-image:none;" data-marpit-pagination-total="19" data-size="16:9">
 <h2 id="15-qa-and-engineering-appendix">15. Q&amp;A and Engineering Appendix</h2>
 <ul>
 <li>Open for peer review regarding architectural topology, schema continuity, caching boundaries, and third-party API isolation.</li>

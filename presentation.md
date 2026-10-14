@@ -231,17 +231,13 @@ graph LR
 
 ---
 
-## 6a. Existing End-to-End Enterprise Identity & Security
+## 6. Existing End-to-End Enterprise Identity & Security
 
 - **Frontend Authentication:** Angular integrates **MSAL (Microsoft Authentication Library)** to handle secure user authentication directly via Microsoft login.
 - **The Token Lifecycle:**
     - MSAL acquires and automatically caches cryptographic JWT Access Tokens in the browser.
     - An internal HTTP interceptor attaches the token to all direct backend API requests.
 - **Backend Authorization:** The `.NET Web API` validates the incoming Bearer token claims against **Azure Entra ID** to enforce granular Role-Based Access Control (RBAC).
-
----
-
-## 6b. Existing End-to-End Enterprise Identity & Security
 
 ```mermaid
 %%{init: {
